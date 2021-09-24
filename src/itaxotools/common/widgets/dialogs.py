@@ -25,7 +25,7 @@ from PySide6 import QtWidgets
 import enum
 
 from .graphics import ScalingImage
-
+from .layouts import VLineSeparator
 
 class PushButton(QtWidgets.QPushButton):
     """A larger button with square borders"""
@@ -279,6 +279,177 @@ class Header(QtWidgets.QFrame):
     @logoProject.setter
     def logoProject(self, logo):
         self.widgetLogoProject.logo = logo
+
+
+class HeaderOld(QtWidgets.QFrame):
+    """
+    The Taxotools toolbar, with space for a title, description,
+    citations and two logos.
+    """
+    def __init__(self):
+        """ """
+        super().__init__()
+
+        self._title = None
+        self._description = None
+        self._citation = None
+        self._logoTool = None
+
+        self.logoSize = 64
+
+        self.draw()
+
+    def draw(self):
+        """ """
+        self.setStyleSheet("""
+            HeaderOld {
+                background: palette(Light);
+                border-top: 2px solid palette(Mid);
+                border-bottom: 1px solid palette(Dark);
+                }
+            """)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
+
+        self.labelDescription = QtWidgets.QLabel('DESCRIPTION')
+        self.labelDescription.setAlignment(QtCore.Qt.AlignBottom)
+        self.labelDescription.setStyleSheet("""
+            color: palette(Text);
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            """)
+
+        self.labelCitation = QtWidgets.QLabel('CITATION')
+        self.labelCitation.setAlignment(QtCore.Qt.AlignTop)
+        self.labelCitation.setStyleSheet("""
+            color: palette(Shadow);
+            font-size: 12px;
+            """)
+
+        labels = QtWidgets.QVBoxLayout()
+        labels.addStretch(1)
+        labels.addWidget(self.labelDescription)
+        labels.addWidget(self.labelCitation)
+        labels.addStretch(1)
+        labels.addSpacing(4)
+        labels.setSpacing(4)
+
+        self.labelLogoTool = QtWidgets.QLabel()
+        self.labelLogoTool.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.labelLogoProject = ScalingImage()
+        layoutLogoProject = QtWidgets.QHBoxLayout()
+        layoutLogoProject.addWidget(self.labelLogoProject)
+        layoutLogoProject.setContentsMargins(2,4,2,4)
+
+        self.toolbar = QtWidgets.QToolBar()
+        self.toolbar.setIconSize(QtCore.QSize(32,32))
+        self.toolbar.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+        self.toolbar.setToolButtonStyle(
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        self.toolbar.setStyleSheet("""
+            QToolBar {
+                spacing: 2px;
+                }
+            QToolButton {
+                color: palette(ButtonText);
+                background: transparent;
+                border: 2px solid transparent;
+                border-radius: 3px;
+                font-size: 14px;
+                min-width: 50px;
+                min-height: 60px;
+                padding: 6px 0px 0px 0px;
+                margin: 4px 0px 4px 0px;
+                }
+            QToolButton:hover {
+                background: palette(Window);
+                border: 2px solid transparent;
+                }
+            QToolButton:pressed {
+                background: palette(Midlight);
+                border: 2px solid palette(Mid);
+                border-radius: 3px;
+                }
+            QToolButton[popupMode="2"]:pressed {
+                padding-bottom: 5px;
+                border: 1px solid palette(Dark);
+                margin: 5px 1px 0px 1px;
+                border-bottom-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+                }
+            QToolButton::menu-indicator {
+                image: none;
+                width: 30px;
+                border-bottom: 2px solid palette(Mid);
+                subcontrol-origin: padding;
+                subcontrol-position: bottom;
+                }
+            QToolButton::menu-indicator:disabled {
+                border-bottom: 2px solid palette(Midlight);
+                }
+            QToolButton::menu-indicator:pressed {
+                border-bottom: 0px;
+                }
+            """)
+
+        layout = QtWidgets.QHBoxLayout()
+        layout.addSpacing(8)
+        layout.addWidget(self.labelLogoTool)
+        layout.addSpacing(6)
+        layout.addWidget(VLineSeparator())
+        layout.addSpacing(12)
+        layout.addLayout(labels, 0)
+        layout.addSpacing(12)
+        layout.addWidget(VLineSeparator())
+        layout.addSpacing(8)
+        layout.addWidget(self.toolbar, 0)
+        layout.addStretch(1)
+        layout.addWidget(VLineSeparator())
+        layout.addLayout(layoutLogoProject, 0)
+        # layout.addWidget(self.labelLogoProject)
+        layout.addSpacing(2)
+        layout.setSpacing(0)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.setLayout(layout)
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, description):
+        self.labelDescription.setText(description)
+        self._description = description
+
+    @property
+    def citation(self):
+        return self._citation
+
+    @citation.setter
+    def citation(self, citation):
+        self.labelCitation.setText(citation)
+        self._citation = citation
+
+    @property
+    def logoTool(self):
+        return self._logoTool
+
+    @logoTool.setter
+    def logoTool(self, logo):
+        self.labelLogoTool.setPixmap(logo)
+        self._logoTool = logo
+
+    @property
+    def logoProject(self):
+        return self.labelLogoProject.logo
+
+    @logoProject.setter
+    def logoProject(self, logo):
+        self.labelLogoProject.logo = logo
 
 
 class Subheader(QtWidgets.QFrame):
