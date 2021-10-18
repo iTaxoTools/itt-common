@@ -26,11 +26,13 @@ from PySide6 import QtGui
 class TextEditLogger(QtWidgets.QPlainTextEdit):
     """Thread-safe log display in a QPlainTextEdit"""
     _appendSignal = QtCore.Signal(object)
+    _resetSignal = QtCore.Signal()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setReadOnly(True)
         self._appendSignal.connect(self._appendTextInline)
+        self._resetSignal.connect(self.clear)
 
     @QtCore.Slot(object)
     def _appendTextInline(self, text):
@@ -44,6 +46,9 @@ class TextEditLogger(QtWidgets.QPlainTextEdit):
     def append(self, text):
         """Call this to append text to the widget"""
         self._appendSignal.emit(str(text))
+
+    def reset(self):
+        self._resetSignal.emit()
 
 
 class SearchWidget(QtWidgets.QLineEdit):
