@@ -60,6 +60,8 @@ Usage example:
 
 """
 
+from copy import copy
+
 
 class Field():
     """
@@ -181,6 +183,9 @@ class Field():
                 f'for field {repr(self.key)} '
                 f'is more than {self.range[1]}'))
         self._value = x
+
+    def copy(self):
+        return copy(self)
 
     type = property(_get_type, _set_type)
     value = property(_get_value, _set_value)
