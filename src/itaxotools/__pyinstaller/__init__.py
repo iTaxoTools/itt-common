@@ -4,12 +4,18 @@
 # When a module is detected by PyInstaller, it will search
 # for corresponding hooks and tests in this directory.
 
-import os
+import itaxotools
+from pathlib import Path
+
+
+def get_namespace_dirs():
+    paths = [Path(path) for path in itaxotools.__path__]
+    return [str(path / '__pyinstaller') for path in paths]
 
 
 def get_hook_dirs():
-    return [os.path.dirname(__file__)]
+    return get_namespace_dirs()
 
 
 def get_PyInstaller_tests():
-    return [os.path.dirname(__file__)]
+    return get_namespace_dirs()

@@ -35,7 +35,7 @@ class FieldLayout(QLayout):
     def __init__(self, label, widget, parent=None):
         super().__init__(parent)
         self.itemList = []
-        self.www = 100
+        self.www = 120
         self.gap = 6
         self.addWidget(label)
         self.addWidget(widget)
