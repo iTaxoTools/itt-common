@@ -205,6 +205,7 @@ class ListWidget(FieldWidget):
         self.setLayout(layout)
 
     def populateCombo(self):
+        self.combo.blockSignals(True)
         self.combo.clear()
         if isinstance(self._field.list, list):
             for k in self._field.list:
@@ -213,6 +214,7 @@ class ListWidget(FieldWidget):
             for k, v in self._field.list.items():
                 self.combo.addItem(v, k)
         self.refreshData()
+        self.combo.blockSignals(False)
 
     def onDataChange(self):
         if self.combo.count() > 0:
@@ -428,7 +430,6 @@ class PlainView(QWidget):
         self._model = model
         model.dataChanged.connect(self.onModelDataChange)
         self.setRootIndex(QModelIndex())
-        self.draw()
 
     def draw(self):
         widget = self._populate(self._rootIndex, 0)
@@ -542,6 +543,3 @@ class PlainView(QWidget):
 
         widget.setLayout(layout)
         return widget
-
-    def _resetParams(self, checked=False):
-        self._model.resetParams()

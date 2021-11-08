@@ -59,6 +59,9 @@ class Model(QAbstractItemModel):
         if parentItem == self.rootItem or parentItem is None:
             return QModelIndex()
         grandParentItem = parentItem._parent
+        if grandParentItem is None:
+            return QModelIndex()
+
         keys = list(grandParentItem._children.keys())
         row = keys.index(parentItem.key)
         return self.createIndex(row, 0, parentItem)
