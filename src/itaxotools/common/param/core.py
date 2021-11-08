@@ -259,6 +259,9 @@ class Group(object):
     def __getitem__(self, child):
         return self._children[child]
 
+    def __iter__(self):
+        return iter(self._children[child] for child in self._children)
+
     def __delitem__(self, child):
         self._children[child]._parent = None
         del self._children[child]
