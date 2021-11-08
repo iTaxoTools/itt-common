@@ -22,6 +22,7 @@ from PySide6 import QtCore
 
 import sys
 import multiprocessing
+import traceback
 
 from . import io
 
@@ -59,14 +60,14 @@ class WorkerThread(QtCore.QThread):
     done(result):
         Emitted when the called function returned successfully.
         Passes the result.
-    fail(exception):
-        Emitted if an exception occured. Passes the exception.
-    fail(exception):
+    fail(exception, traceback):
+        Emitted if an exception occured. Passes the exception and traceback.
+    cancel(exception):
         Emitted if the thread was cancelled.
     """
     done = QtCore.Signal(object)
-    fail = QtCore.Signal(object)
-    cancel = QtCore.Signal(object)
+    fail = QtCore.Signal(Exception, str)
+    cancel = QtCore.Signal(CancelledError)
 
     def __init__(self, function, *args, **kwargs):
         """
@@ -95,7 +96,8 @@ class WorkerThread(QtCore.QThread):
         except CancelledError as exception:
             self.cancel.emit(exception)
         except Exception as exception:
-            self.fail.emit(exception)
+            trace = traceback.format_exc()
+            self.fail.emit(exception, trace)
         else:
             self.done.emit(result)
 
