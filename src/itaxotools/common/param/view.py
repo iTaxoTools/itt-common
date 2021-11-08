@@ -23,7 +23,7 @@ Parameter view for PySide6
 
 from PySide6.QtCore import Qt, QModelIndex, Signal, QRect, QSize
 from PySide6.QtWidgets import (
-    QFrame, QLabel, QLineEdit, QCheckBox, QScrollArea, QMessageBox,
+    QWidget, QFrame, QLabel, QLineEdit, QCheckBox, QScrollArea, QMessageBox,
     QComboBox, QGroupBox, QVBoxLayout, QHBoxLayout, QLayout, QPushButton)
 from PySide6.QtGui import QValidator, QIntValidator, QDoubleValidator
 
@@ -380,6 +380,165 @@ class View(QScrollArea):
             resetButton.setAutoDefault(False)
             resetButton.clicked.connect(self._resetParams)
             layout.addWidget(resetButton)
+
+        widget.setLayout(layout)
+        return widget
+
+    def _resetParams(self, checked=False):
+        self._model.resetParams()
+
+
+# PlainView + View to be refactored
+
+class PlainView(QWidget):
+    """Widget-based view for param.Model"""
+    # Emited for every index when model data change
+    dataChanged = Signal(object)
+
+    def __init__(self, model=None, parent=None):
+        super().__init__(parent)
+        self._model = None
+        self._rootIndex = QModelIndex()
+        self._widgets = dict()
+        self._customParamClass = dict()
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+        if model is not None:
+            self.setModel(model)
+
+    def setWidget(self, widget):
+        while self.layout().count():
+            item = self.layout().takeAt(0)
+            item.widget().deleteLater()
+        self.layout().addWidget(widget)
+
+    def rootIndex(self):
+        return self._rootIndex
+
+    def setRootIndex(self, index):
+        self._rootIndex = index
+        self.draw()
+
+    def model(self):
+        return self._model
+
+    def setModel(self, model):
+        self._widgets = dict()
+        self._model = model
+        model.dataChanged.connect(self.onModelDataChange)
+        self.setRootIndex(QModelIndex())
+        self.draw()
+
+    def draw(self):
+        widget = self._populate(self._rootIndex, 0)
+        self.setWidget(widget)
+        widget.setStyleSheet("""
+            FieldWidget[depth="1"] {
+                margin-left: 1px;
+                margin-right: 10px;
+                margin-bottom: 8px;
+                }
+            QGroupBox:!flat {
+                background-color: rgba(0,0,0,0.02);
+                border: 1px solid Palette(Mid);
+                margin-top: 28px;
+                padding: 0px;
+                }
+            QGroupBox::title:!flat {
+                color: Palette(Text);
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 4px -1px;
+                }
+            QGroupBox:flat {
+                border-top: 1px solid Palette(Mid);
+                border-left: 0px;
+                border-bottom: 0px;
+                margin-top: 24px;
+                margin-right: -20px;
+                padding-left: 12px;
+                padding-bottom: 0px;
+                }
+            QGroupBox::title:flat {
+                color: Palette(Text);
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 4px -1px;
+                }
+        """)
+        widget.show()
+
+    def onInvalidValue(self, error):
+        """Called when a field value was invalid"""
+        QMessageBox.warning(self, 'Warning', error)
+
+    def addCustomParamWidget(self, param, _class):
+        """The view for `param` will be an instance of `_class`"""
+        self._customParamClass[id(param)] = _class
+        self.draw()
+
+    def onModelDataChange(self, topLeft, bottomRight, roles):
+        """Send signal updates for all indices changed"""
+        if bottomRight.parent() != topLeft.parent():
+            raise RuntimeError(
+                'View: Model dataChanged items have different parents')
+        parent = topLeft.parent()
+        top = topLeft.row()
+        bottom = bottomRight.row()
+        for row in range(top, bottom+1):
+            index = self._model.index(row, 0, parent)
+            self.dataChanged.emit(index)
+
+    def onWidgetDataChange(self, index, data):
+        """Update model"""
+        if not self._model.setData(index, data):
+            self.onInvalidValue(self._model.setDataError)
+            self.sender().refreshData()
+            self.sender().setFocus()
+            # QTimer.singleShot(0, self.sender().setFocus)
+
+    def _fieldWidget(self, index, field, depth=0):
+        """Generate and return an appropriate widget for the field"""
+        type_to_widget = {
+            bool: BoolWidget,
+            float: EntryWidget,
+            str: EntryWidget,
+            int: EntryWidget,
+            }
+        if id(field) in self._customParamClass:
+            _class = self._customParamClass[id(field)]
+            widget = _class(index, field, self)
+        elif field.list:
+            widget = ListWidget(index, field, self)
+        elif field.type in type_to_widget.keys():
+            widget = type_to_widget[field.type](index, field, self)
+        else:
+            widget = EntryWidget(index, field, self)
+        widget.setProperty('depth', depth)
+        return widget
+
+    def _populate(self, index, depth=0):
+        """Recursively populate and return a widget with params"""
+        data = self._model.data(index, self._model.DataRole)
+
+        if isinstance(data, Field):
+            return self._fieldWidget(index, data, depth)
+
+        if depth == 0:
+            widget = QFrame()
+            layout = QVBoxLayout()
+        else:
+            widget = QGroupBox(data.label)
+            widget.setFlat(True)
+            layout = QVBoxLayout()
+            layout.setContentsMargins(0, 6, 0, 3)
+
+        rows = self._model.rowCount(index)
+        for row in range(0, rows):
+            childIndex = self._model.index(row, 0, index)
+            child = self._populate(childIndex, depth+1)
+            layout.addWidget(child)
 
         widget.setLayout(layout)
         return widget
