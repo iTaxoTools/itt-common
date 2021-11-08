@@ -76,11 +76,11 @@ class Field():
         All keyword arguments become attributes.
         """
         self.key = None
-        self.label = None
         self.doc = None
         self.default = None
         self.list = {}
         self.range = (None, None)
+        self._label = None
         self._value = None
         self._parent = None
         self._type = type(None)
@@ -92,6 +92,8 @@ class Field():
                 f'key {repr(key)} is not a valid string identifier')
 
         # Assign these in order
+        if 'label' in kwargs:
+            self._label = kwargs.pop('label')
         if 'type' in kwargs:
             self.type = kwargs.pop('type')
         if 'list' in kwargs:
@@ -108,8 +110,7 @@ class Field():
             setattr(self, attr, kwargs[attr])
 
     def __str__(self):
-        label = self.label if self.label is not None else self.key
-        return (f'{self.__class__.__name__}(\'{label}\': {self.value})')
+        return (f'{self.__class__.__name__}(\'{self.label}\': {self.value})')
 
     def __repr__(self):
         parent = None if self._parent is None else (
@@ -121,7 +122,7 @@ class Field():
             f'key={repr(self.key)}, '
             f'value={repr(self.value)}, '
             f'type={repr(self.type)}, '
-            f'label={repr(self.label)}, '
+            f'label={repr(self._label)}, '
             f'doc={repr(self.doc)}, '
             f'default={repr(self.default)}, '
             f'list={repr(self.list)}, '
@@ -147,6 +148,10 @@ class Field():
 
     def __ge__(self, other):
         return self.value >= other
+
+    @property
+    def label(self):
+        return self._label if self._label is not None else self.key
 
     def _get_type(self):
         return self._type
@@ -206,8 +211,8 @@ class Group(object):
         If a children list is provided, they are properly added.
         """
         self.key = None
-        self.label = None
         self.doc = None
+        self._label = None
         self._children = {}
         self._parent = None
 
@@ -217,6 +222,8 @@ class Group(object):
             raise TypeError(
                 f'key {repr(key)} is not a valid string identifier')
 
+        if 'label' in kwargs:
+            self._label = kwargs.pop('label')
         if 'children' in kwargs:
             for child in kwargs['children']:
                 self.add(child)
@@ -226,9 +233,8 @@ class Group(object):
             setattr(self, attr, kwargs[attr])
 
     def __str__(self):
-        label = self.label if self.label is not None else self.key
         return (
-            f'{self.__class__.__name__}(\'{label}\': '
+            f'{self.__class__.__name__}(\'{self.label}\': '
             f'{list(self._children.keys())})')
 
     def __repr__(self):
@@ -243,7 +249,7 @@ class Group(object):
         return (
             f'{self.__class__.__name__}('
             f'key={repr(self.key)}, '
-            f'label={repr(self.label)}, '
+            f'label={repr(self._label)}, '
             f'doc={repr(self.doc)}, '
             f'children=[{children}], '
             f'parent={parent}'
@@ -289,6 +295,10 @@ class Group(object):
 
     def __dir__(self):
         return super().__dir__() + list(self._children.keys())
+
+    @property
+    def label(self):
+        return self._label if self._label is not None else self.key
 
     def add(self, x):
         """Add a Field or Group while properly setting key and parent"""
