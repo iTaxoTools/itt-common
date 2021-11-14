@@ -404,16 +404,16 @@ class PlainView(QWidget):
         self._widgets = dict()
         self._customParamClass = dict()
         layout = QVBoxLayout()
+        layout.setSpacing(8)
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
         if model is not None:
             self.setModel(model)
 
-    def setWidget(self, widget):
+    def clearLayout(self):
         while self.layout().count():
             item = self.layout().takeAt(0)
             item.widget().deleteLater()
-        self.layout().addWidget(widget)
 
     def rootIndex(self):
         return self._rootIndex
@@ -432,43 +432,8 @@ class PlainView(QWidget):
         self.setRootIndex(QModelIndex())
 
     def draw(self):
-        widget = self._populate(self._rootIndex, 0)
-        self.setWidget(widget)
-        widget.setStyleSheet("""
-            FieldWidget[depth="1"] {
-                margin-left: 1px;
-                margin-right: 10px;
-                margin-bottom: 8px;
-                }
-            QGroupBox:!flat {
-                background-color: rgba(0,0,0,0.02);
-                border: 1px solid Palette(Mid);
-                margin-top: 28px;
-                padding: 0px;
-                }
-            QGroupBox::title:!flat {
-                color: Palette(Text);
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-                padding: 4px -1px;
-                }
-            QGroupBox:flat {
-                border-top: 1px solid Palette(Mid);
-                border-left: 0px;
-                border-bottom: 0px;
-                margin-top: 24px;
-                margin-right: -20px;
-                padding-left: 12px;
-                padding-bottom: 0px;
-                }
-            QGroupBox::title:flat {
-                color: Palette(Text);
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-                padding: 4px -1px;
-                }
-        """)
-        widget.show()
+        self.clearLayout()
+        self._populate(self._rootIndex, 0)
 
     def onInvalidValue(self, error):
         """Called when a field value was invalid"""
@@ -526,20 +491,12 @@ class PlainView(QWidget):
         if isinstance(data, Field):
             return self._fieldWidget(index, data, depth)
 
-        if depth == 0:
-            widget = QFrame()
-            layout = QVBoxLayout()
-        else:
-            widget = QGroupBox(data.label)
-            widget.setFlat(True)
-            layout = QVBoxLayout()
-            layout.setContentsMargins(0, 6, 0, 3)
+        if depth != 0:
+            return None
 
         rows = self._model.rowCount(index)
         for row in range(0, rows):
             childIndex = self._model.index(row, 0, index)
             child = self._populate(childIndex, depth+1)
-            layout.addWidget(child)
-
-        widget.setLayout(layout)
-        return widget
+            if child is not None:
+                self.layout().addWidget(child)
