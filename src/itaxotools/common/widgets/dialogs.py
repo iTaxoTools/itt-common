@@ -23,6 +23,7 @@ from PySide6 import QtCore
 from PySide6 import QtWidgets
 
 import enum
+import traceback
 
 from .graphics import ScalingImage
 from .layouts import VLineSeparator
@@ -776,6 +777,10 @@ class ToolDialog(QtWidgets.QDialog):
     Handles notification sub-dialogs.
     Asks for verification before closing.
     """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.title = 'Itaxotools'
+
     def reject(self, force=False):
         """Called on dialog close or <ESC>"""
         if force:
@@ -786,7 +791,7 @@ class ToolDialog(QtWidgets.QDialog):
         if not filter:
             return
         msgBox = QtWidgets.QMessageBox(self)
-        msgBox.setWindowTitle(self.windowTitle())
+        msgBox.setWindowTitle(self.title)
         msgBox.setIcon(QtWidgets.QMessageBox.Question)
         msgBox.setText('Are you sure you want to quit?')
         msgBox.setStandardButtons(
@@ -819,13 +824,13 @@ class ToolDialog(QtWidgets.QDialog):
         self.msgCloseAll()
         return dialog.exec()
 
-    def fail(self, exception):
+    def showException(self, exception):
         """Show exception dialog"""
         msgBox = QtWidgets.QMessageBox(self)
-        msgBox.setWindowTitle(self.windowTitle())
+        msgBox.setWindowTitle(self.title)
         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
         msgBox.setText('An exception occured:')
         msgBox.setInformativeText(str(exception))
+        msgBox.setDetailedText(traceback.format_exc())
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
         self.msgShow(msgBox)

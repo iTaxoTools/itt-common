@@ -174,8 +174,9 @@ class Worker():
             self.pipeControl.send('RESULT')
             self.pipeData.send(result)
         except Exception as exception:
+            trace = traceback.format_exc()
             self.pipeControl.send('EXCEPTION')
-            self.pipeData.send(exception)
+            self.pipeData.send((exception, trace))
         finally:
             self.pipeControl.close()
             self.pipeData.close()
@@ -193,7 +194,7 @@ class Process(QtCore.QThread):
     Signals
     -------
     done(result) : On success
-    fail(exception) : On exception raised
+    fail(exception, traceback) : On exception raised
     error(exitcode) : On process exit
 
     Example
@@ -218,8 +219,8 @@ class Process(QtCore.QThread):
 
     """
     done = QtCore.Signal(object)
-    fail = QtCore.Signal(object)
-    error = QtCore.Signal(object)
+    fail = QtCore.Signal(Exception, str)
+    error = QtCore.Signal(int)
 
     def __init__(self, function, *args, **kwargs):
         """
@@ -310,7 +311,7 @@ class Process(QtCore.QThread):
         elif self._data == 'RESULT':
             self.done.emit(self._data_obj)
         elif self._data == 'EXCEPTION':
-            self.fail.emit(self._data_obj)
+            self.fail.emit(*self._data_obj)
 
     def handleControl(self, data):
         """Handle control pipe signals"""
