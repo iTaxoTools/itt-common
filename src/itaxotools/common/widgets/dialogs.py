@@ -781,15 +781,16 @@ class ToolDialog(QtWidgets.QWidget):
         super().__init__(*args, **kwargs)
         self.title = 'Itaxotools'
 
-    def reject(self, force=False):
-        """Called on dialog close or <ESC>"""
-        if force:
-            return self._reject()
-        filter = self.filterReject()
-        if filter is None:
-            return self._reject()
-        if not filter:
-            return
+    def closeEvent(self, event):
+        """Called on window close"""
+        if self.reject():
+            self.onReject()
+            event.accept()
+        else:
+            event.ignore()
+
+    def reject(self) -> bool:
+        """Return True to close window, False to prevent closing"""
         msgBox = QtWidgets.QMessageBox(self)
         msgBox.setWindowTitle(self.title)
         msgBox.setIcon(QtWidgets.QMessageBox.Question)
@@ -798,20 +799,11 @@ class ToolDialog(QtWidgets.QWidget):
             QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         msgBox.setDefaultButton(QtWidgets.QMessageBox.Yes)
         confirm = self.msgShow(msgBox)
-        if confirm == QtWidgets.QMessageBox.Yes:
-            self._reject()
-
-    def _reject(self):
-        self.onReject()
-        super().reject()
+        return confirm == QtWidgets.QMessageBox.Yes
 
     def onReject(self):
         """Called when dialog is closed"""
         pass
-
-    def filterReject(self):
-        """Intercept reject events: True allows, False blocks, None rejects"""
-        return True
 
     def msgCloseAll(self):
         """Rejects any open QMessageBoxes"""
