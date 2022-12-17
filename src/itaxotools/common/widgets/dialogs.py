@@ -771,7 +771,7 @@ class Panel(QtWidgets.QWidget):
         self._foot = footer
 
 
-class ToolDialog(QtWidgets.QDialog):
+class ToolDialog(QtWidgets.QWidget):
     """
     For use as the main window of a tool.
     Handles notification sub-dialogs.
