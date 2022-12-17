@@ -779,7 +779,8 @@ class ToolDialog(QtWidgets.QWidget):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title = 'Itaxotools'
+        self.setWindowFlags(QtCore.Qt.Window)
+        self.title = 'iTaxoTools'
 
     def closeEvent(self, event):
         """Called on window close"""
