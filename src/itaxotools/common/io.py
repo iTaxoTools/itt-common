@@ -28,7 +28,8 @@ import io
 def _redirect(module=sys, stream='stdout', dest=None):
     """Redirect module stream to file stream"""
     original = getattr(module, stream)
-    original.flush()
+    if original is not None:
+        original.flush()
     setattr(module, stream, dest)
     try:
         yield dest
