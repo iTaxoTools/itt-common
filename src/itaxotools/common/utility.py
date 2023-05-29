@@ -19,7 +19,43 @@
 """Utility classes and functions"""
 
 
+from typing import Callable, Generic, TypeVar
+
+KeyType = TypeVar('KeyType')
+DecoratedType = TypeVar('DecoratedType')
+
+
+class DecoratorDict(Generic[KeyType, DecoratedType]):
+    """
+    Instances can be used as decorators that accept a single key as argument.
+    Decorated functions can then be accessed by key.
+    """
+    def __init__(self):
+        self.items = dict()
+
+    def __call__(self, key: KeyType) -> Callable[DecoratedType, DecoratedType]:
+        def decorator(func: DecoratedType) -> DecoratedType:
+            self.items[key] = func
+            return func
+        return decorator
+
+    def __getitem__(self, key: KeyType) -> DecoratedType:
+        if not key in self.items:
+            raise Exception('')
+        return self.items[key]
+
+    def __contains__(self, key) -> bool:
+        return key in self.items
+
+    def __iter__(self) -> iter:
+        return iter(self.items)
+
+    def __len__(self) -> int:
+        return len(self.items)
+
+
 class AttrDict(dict):
+    """Members can also be accessed as attributes"""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self
@@ -29,6 +65,7 @@ class AttrDict(dict):
 
 
 class Guard:
+    """Should probably use threading.Lock"""
     def __init__(self):
         self.locked = False
 
@@ -41,7 +78,8 @@ class Guard:
     def __bool__(self):
         return self.locked
 
-def override(f):
+
+def override(f: DecoratedType) -> DecoratedType:
     return f
 
 
