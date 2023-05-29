@@ -247,14 +247,29 @@ class Binding:
     signal: QtCore.SignalInstance
     slot: Callable
 
+    @staticmethod
+    def _get_proxied_slot(slot, proxy):
+        if not proxy:
+            return slot
+        def proxy_slot(value):
+            slot(proxy(value))
+        return proxy_slot
+
+    @staticmethod
+    def _get_conditional_slot(slot, condition):
+        if not condition:
+            return slot
+        def conditional_slot(value):
+            if condition(value):
+                slot(value)
+        return conditional_slot
+
     @classmethod
-    def _bind(cls, signal, slot, proxy=None):
-        if proxy:
-            def proxy_slot(value):
-                slot(proxy(value))
-            bind_slot = proxy_slot
-        else:
-            bind_slot = slot
+    def _bind(cls, signal, slot, proxy=None, condition=None):
+        bind_slot = slot
+        bind_slot = cls._get_proxied_slot(bind_slot, proxy)
+        bind_slot = cls._get_conditional_slot(bind_slot, condition)
+
         signal.connect(bind_slot)
         id = cls(signal, slot)
         cls.bindings[id] = bind_slot
@@ -275,6 +290,7 @@ class Binder(set):
         source: Union[PropertyRef, QtCore.SignalInstance],
         destination: Union[PropertyRef, Callable],
         proxy: Optional[Callable] = None,
+        condition: Optional[Callable] = None,
     ):
 
         if isinstance(source, PropertyRef):
@@ -287,7 +303,7 @@ class Binder(set):
         else:
             slot = destination
 
-        key = Binding._bind(signal, slot, proxy)
+        key = Binding._bind(signal, slot, proxy, condition)
         if isinstance(source, PropertyRef):
             source.update()
 
