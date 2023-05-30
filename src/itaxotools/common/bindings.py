@@ -20,7 +20,7 @@ from PySide6 import QtCore
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import Callable, ClassVar, Optional, Union, NamedTuple, Type
+from typing import Callable, ClassVar, Optional, Union, NamedTuple, Type, TypeVar, get_origin
 from types import UnionType
 
 
@@ -158,7 +158,11 @@ class PropertyMeta(type(QtCore.QObject)):
         key_default = Property.key_default(key)
         key_list = Property.key_list
 
-        notify = QtCore.Signal(prop.type)
+        prop_type = get_origin(prop.type) or prop.type
+        if isinstance(prop_type, TypeVar) and prop_type.__bound__:
+            prop_type = prop_type.__bound__
+
+        notify = QtCore.Signal(prop_type)
 
         def getter(self):
             return getattr(self, key_value, None)
@@ -171,9 +175,9 @@ class PropertyMeta(type(QtCore.QObject)):
 
         default = prop.default
         if default == Instance:
-            default = _Instance(prop.type)
+            default = _Instance(prop_type)
         if isinstance(default, Instance):
-            default = _Instance(prop.type, *default.args, **default.kwargs)
+            default = _Instance(prop_type, *default.args, **default.kwargs)
 
         attrs[key_list].append(key)
 
@@ -183,7 +187,7 @@ class PropertyMeta(type(QtCore.QObject)):
         attrs[key_default] = default
 
         attrs[key] = QtCore.Property(
-            type=prop.type,
+            type=prop_type,
             fget=getter,
             fset=setter,
             notify=notify,
