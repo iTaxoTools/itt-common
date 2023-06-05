@@ -11,7 +11,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='itaxotools-common',
-    version='0.3.dev0',
+    version='0.3.0',
     description='Common resources for iTaxoTools',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -38,6 +38,7 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3 :: Only',
     ],
     include_package_data=True,
