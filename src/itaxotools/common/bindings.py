@@ -132,6 +132,9 @@ class PropertiesRef:
     def __iter__(self):
         return (self[key] for key in self._list())
 
+    def __contains__(self, key):
+        return key in self._list()
+
 
 class PropertyMeta(type(QtCore.QObject)):
     def __new__(cls, name, bases, attrs):
