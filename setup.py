@@ -25,7 +25,7 @@ setup(
     python_requires='>=3.8.6, <4',
     extras_require={
         'gui': ['pyside6>=6.1.1'],
-        'dev': ['pyinstaller>=4.5.1'],
+        'dev': ['pyinstaller>=4.5.1', 'pytest', 'pytest-qt'],
     },
     entry_points={
         'pyinstaller40': [
