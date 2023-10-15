@@ -46,3 +46,30 @@ def test_conditional_bind():
 
     a.dummy = 11
     assert b.dummy == 11
+
+
+def test_property_tags():
+
+    class DummyTaggedObject(PropertyObject):
+        x = Property(int, 0, tag='x')
+        y = Property(int, 0, tag='y')
+        z = Property(int, 0)
+
+    a = DummyTaggedObject()
+
+    assert a.properties.x.tag == 'x'
+    assert a.properties.y.tag == 'y'
+    assert a.properties.z.tag is None
+
+
+def test_property_iteration():
+
+    class DummyTaggedObject(PropertyObject):
+        x = Property(int, 1)
+        y = Property(int, 2)
+        z = Property(int, 3)
+
+    a = DummyTaggedObject()
+
+    assert [x.key for x in a.properties] == ['x', 'y', 'z']
+    assert [x.value for x in a.properties] == [1, 2, 3]

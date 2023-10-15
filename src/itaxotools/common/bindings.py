@@ -19,9 +19,12 @@
 from PySide6 import QtCore
 
 from enum import Enum
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, ClassVar, Optional, Union, NamedTuple, Type, TypeVar, get_origin
 from types import UnionType
+
+from .utility import AttrDict
 
 
 class Instance:
@@ -43,12 +46,14 @@ class Property:
 
     key_ref = 'properties'
     key_list = '_property_list'
+    key_tags = '_property_tags'
 
-    def __init__(self, type=object, default=None):
+    def __init__(self, type=object, default=None, tag=None):
         if isinstance(type, UnionType):
             type = object
         self.type = type
         self.default = default
+        self.tag = tag
 
     @staticmethod
     def key_value(key):
@@ -103,6 +108,11 @@ class PropertyRef:
     def value(self):
         return self.get()
 
+    @property
+    def tag(self):
+        tags = getattr(self._parent, Property.key_tags)
+        return tags[self._key]
+
     @value.setter
     def value(self, value):
         return self.set(value)
@@ -153,13 +163,20 @@ class PropertyMeta(type(QtCore.QObject)):
         lists = [getattr(base, key_list, []) for base in bases]
         attrs[key_list] = sum(lists, [])
 
-    def _register_property(attrs, key, prop):
+        key_tags = Property.key_tags
+        attrs[key_tags] = defaultdict(lambda: None)
+
+    def _register_property(attrs:dict[str, object], key: str, prop: Property):
         key_value = Property.key_value(key)
         key_notify = Property.key_notify(key)
         key_getter = Property.key_getter(key)
         key_setter = Property.key_setter(key)
         key_default = Property.key_default(key)
         key_list = Property.key_list
+        key_tags = Property.key_tags
+
+        if prop.tag is not None:
+            attrs[key_tags][key] = prop.tag
 
         prop_type = get_origin(prop.type) or prop.type
         if isinstance(prop_type, TypeVar) and prop_type.__bound__:
