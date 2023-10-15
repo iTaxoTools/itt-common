@@ -48,6 +48,24 @@ def test_conditional_bind():
     assert b.dummy == 11
 
 
+def test_binder_update():
+
+    a = DummyObject()
+    b = DummyObject()
+
+    binder = Binder()
+    binder.bind(a.properties.dummy, b.properties.dummy)
+
+    a.dummy = 1
+    assert b.dummy == 1
+
+    b.dummy = 2
+    assert b.dummy == 2
+
+    binder.update()
+    assert b.dummy == 1
+
+
 def test_property_tags():
 
     class DummyTaggedObject(PropertyObject):

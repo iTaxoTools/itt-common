@@ -4,6 +4,6 @@
 # flake8: noqa
 
 from .dialogs import *
-from .widgets import *
-from .layouts import *
 from .graphics import *
+from .layouts import *
+from .widgets import *

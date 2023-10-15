@@ -19,9 +19,9 @@
 """Get resource paths for Python3.8+"""
 
 
+import os
 import pathlib
 import sys
-import os
 
 
 def _package_path_pyinstaller(package):

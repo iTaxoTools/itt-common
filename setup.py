@@ -1,8 +1,9 @@
 """The setup module for iTaxoTools-common"""
 
 # Always prefer setuptools over distutils
-from setuptools import setup, find_namespace_packages
 import pathlib
+
+from setuptools import find_namespace_packages, setup
 
 # Get the long description from the README file
 here = pathlib.Path(__file__).parent.resolve()
@@ -29,8 +30,8 @@ setup(
     },
     entry_points={
         'pyinstaller40': [
-          'hook-dirs = itaxotools.__pyinstaller:get_hook_dirs',
-          'tests = itaxotools.__pyinstaller:get_PyInstaller_tests'
+            'hook-dirs = itaxotools.__pyinstaller:get_hook_dirs',
+            'tests = itaxotools.__pyinstaller:get_PyInstaller_tests'
         ]
     },
     classifiers=[

@@ -16,13 +16,16 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # -----------------------------------------------------------------------------
 
+from __future__ import annotations
+
 from PySide6 import QtCore
 
-from enum import Enum
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable, ClassVar, Optional, Union, NamedTuple, Type, TypeVar, get_origin
+from enum import Enum
 from types import UnionType
+from typing import (
+    Callable, Optional, TypeVar, Union, get_origin)
 
 from .utility import AttrDict
 
@@ -166,7 +169,7 @@ class PropertyMeta(type(QtCore.QObject)):
         key_tags = Property.key_tags
         attrs[key_tags] = defaultdict(lambda: None)
 
-    def _register_property(attrs:dict[str, object], key: str, prop: Property):
+    def _register_property(attrs: dict[str, object], key: str, prop: Property):
         key_value = Property.key_value(key)
         key_notify = Property.key_notify(key)
         key_getter = Property.key_getter(key)
@@ -264,81 +267,122 @@ class EnumObject(PropertyObject, metaclass=EnumObjectMeta):
         self._set_property_defaults()
 
 
+BindingHash = tuple[QtCore.SignalInstance, Callable]
+
+
 @dataclass(frozen=True)
 class Binding:
-    bindings: ClassVar = dict()
-
+    source: Union[PropertyRef, QtCore.SignalInstance]
+    destination: Union[PropertyRef, Callable]
     signal: QtCore.SignalInstance
     slot: Callable
+    bound_slot: Callable
+    update_slot: Callable
+
+    def __post_init__(self):
+        self.update()
 
     @staticmethod
     def _get_proxied_slot(slot, proxy):
         if not proxy:
             return slot
+
         def proxy_slot(value):
             slot(proxy(value))
+
         return proxy_slot
 
     @staticmethod
     def _get_conditional_slot(slot, condition):
         if not condition:
             return slot
+
         def conditional_slot(value):
             if condition(value):
                 slot(value)
+
         return conditional_slot
 
     @classmethod
-    def _bind(cls, signal, slot, proxy=None, condition=None):
-        bind_slot = slot
-        bind_slot = cls._get_proxied_slot(bind_slot, proxy)
-        bind_slot = cls._get_conditional_slot(bind_slot, condition)
+    def new(
+        cls,
+        source: Union[PropertyRef, QtCore.SignalInstance],
+        destination: Union[PropertyRef, Callable],
+        proxy: Optional[Callable] = None,
+        condition: Optional[Callable] = None,
+    ) -> Binding:
 
-        signal.connect(bind_slot)
-        id = cls(signal, slot)
-        cls.bindings[id] = bind_slot
-        return id
+        if isinstance(source, PropertyRef):
+            signal = source.notify
+            update_slot = source.update
+        else:
+            signal = source
+            update_slot = None
 
-    @classmethod
-    def _unbind(cls, signal, slot):
-        id = cls(signal, slot)
-        bind_slot = cls.bindings[id]
-        signal.disconnect(bind_slot)
-        return id
+        if isinstance(destination, PropertyRef):
+            slot = destination.set
+        else:
+            slot = destination
+
+        bound_slot = slot
+        bound_slot = cls._get_proxied_slot(bound_slot, proxy)
+        bound_slot = cls._get_conditional_slot(bound_slot, condition)
+
+        signal.connect(bound_slot)
+
+        return cls(
+            source = source,
+            destination = destination,
+            signal = signal,
+            slot = slot,
+            bound_slot = bound_slot,
+            update_slot = update_slot,
+        )
+
+    def unbind(self):
+        self.signal.disconnect(self.bound_slot)
+
+    def update(self):
+        if self.update_slot is not None:
+            self.update_slot()
 
 
-class Binder(set):
-
+class Binder(dict[BindingHash, Binding]):
     def bind(
         self,
         source: Union[PropertyRef, QtCore.SignalInstance],
         destination: Union[PropertyRef, Callable],
         proxy: Optional[Callable] = None,
         condition: Optional[Callable] = None,
-    ):
+    ) -> None:
 
-        if isinstance(source, PropertyRef):
-            signal = source.notify
-        else:
-            signal = source
-
-        if isinstance(destination, PropertyRef):
-            slot = destination.set
-        else:
-            slot = destination
-
-        key = Binding._bind(signal, slot, proxy, condition)
-        if isinstance(source, PropertyRef):
-            source.update()
-
-        self.add(key)
+        binding = Binding.new(source, destination, proxy, condition)
+        self[self._hash(source, destination)] = binding
 
     def unbind(
         self,
         source: Union[PropertyRef, QtCore.SignalInstance],
         destination: Union[PropertyRef, Callable],
-        remove=True,
-    ):
+    ) -> None:
+
+        hash = self._hash(source, destination)
+        self[hash].unbind()
+        del self[hash]
+
+    def unbind_all(self):
+        for binding in self.values():
+            binding.unbind()
+        self.clear()
+
+    def update(self):
+        for binding in self.values():
+            binding.update()
+
+    def _hash(
+        self,
+        source: Union[PropertyRef, QtCore.SignalInstance],
+        destination: Union[PropertyRef, Callable],
+    ) -> BindingHash:
 
         if isinstance(source, PropertyRef):
             signal = source.notify
@@ -350,12 +394,4 @@ class Binder(set):
         else:
             slot = destination
 
-        key = Binding._unbind(signal, slot)
-        if remove:
-            self.remove(key)
-        return key
-
-    def unbind_all(self):
-        for key in self:
-            self.unbind(key.signal, key.slot, remove=False)
-        self.clear()
+        return (signal, slot)

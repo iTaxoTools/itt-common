@@ -21,7 +21,7 @@
 Parameter model for PySide6
 """
 
-from PySide6.QtCore import Qt, QAbstractItemModel, QModelIndex
+from PySide6.QtCore import QAbstractItemModel, QModelIndex, Qt
 
 from . import Field, Group
 

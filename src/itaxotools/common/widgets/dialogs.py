@@ -19,14 +19,14 @@
 """Widgets for dialog windows"""
 
 
-from PySide6 import QtCore
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 import enum
 import traceback
 
 from .graphics import ScalingImage
 from .layouts import VLineSeparator
+
 
 class PushButton(QtWidgets.QPushButton):
     """A larger button with square borders"""
@@ -804,7 +804,6 @@ class ToolDialog(QtWidgets.QWidget):
 
     def onReject(self):
         """Called when dialog is closed"""
-        pass
 
     def msgCloseAll(self):
         """Rejects any open QMessageBoxes"""

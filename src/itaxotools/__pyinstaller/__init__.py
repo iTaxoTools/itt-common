@@ -4,8 +4,9 @@
 # When a module is detected by PyInstaller, it will search
 # for corresponding hooks and tests in this directory.
 
-import itaxotools
 from pathlib import Path
+
+import itaxotools
 
 
 def get_namespace_dirs():

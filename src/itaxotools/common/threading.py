@@ -20,8 +20,8 @@
 
 from PySide6 import QtCore
 
-import sys
 import multiprocessing
+import sys
 import traceback
 
 from . import io
@@ -321,11 +321,9 @@ class Process(QtCore.QThread):
 
     def handleOut(self, data):
         """Overload this to handle process stdout"""
-        pass
 
     def handleErr(self, data):
         """Overload this to handle process stderr"""
-        pass
 
     def quit(self):
         """Clean exit"""

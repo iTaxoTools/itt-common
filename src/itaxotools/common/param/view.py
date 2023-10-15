@@ -21,11 +21,11 @@
 Parameter view for PySide6
 """
 
-from PySide6.QtCore import Qt, QModelIndex, Signal, QRect, QSize
+from PySide6.QtCore import QModelIndex, QRect, QSize, Qt, Signal
+from PySide6.QtGui import QDoubleValidator, QIntValidator, QValidator
 from PySide6.QtWidgets import (
-    QWidget, QFrame, QLabel, QLineEdit, QCheckBox, QScrollArea, QMessageBox,
-    QComboBox, QGroupBox, QVBoxLayout, QHBoxLayout, QLayout, QPushButton)
-from PySide6.QtGui import QValidator, QIntValidator, QDoubleValidator
+    QCheckBox, QComboBox, QFrame, QGroupBox, QHBoxLayout, QLabel, QLayout,
+    QLineEdit, QMessageBox, QPushButton, QScrollArea, QVBoxLayout, QWidget)
 
 from . import Field
 
