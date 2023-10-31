@@ -24,8 +24,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
 from types import UnionType
-from typing import (
-    Callable, Optional, TypeVar, Union, get_origin)
+from typing import Callable, Iterator, Optional, TypeVar, Union, get_origin
 
 from .utility import AttrDict
 
@@ -85,34 +84,34 @@ class PropertyRef:
         self._key = key
 
     @property
-    def notify(self):
+    def notify(self) -> Callable[[], None]:
         return getattr(self._parent, Property.key_notify(self._key))
 
     @property
-    def get(self):
+    def get(self) -> Callable[[], object]:
         return getattr(self._parent, Property.key_getter(self._key))
 
     @property
-    def set(self):
+    def set(self) -> Callable[[object], None]:
         return getattr(self._parent, Property.key_setter(self._key))
 
     @property
-    def default(self):
+    def default(self) -> object:
         default = getattr(self._parent, Property.key_default(self._key))
         if isinstance(default, _Instance):
             return default.type(*default.args, **default.kwargs)
         return default
 
     @property
-    def key(self):
+    def key(self) -> str:
         return self._key
 
     @property
-    def value(self):
+    def value(self) -> object:
         return self.get()
 
     @property
-    def tag(self):
+    def tag(self) -> object:
         tags = getattr(self._parent, Property.key_tags)
         return tags[self._key]
 
@@ -120,7 +119,7 @@ class PropertyRef:
     def value(self, value):
         return self.set(value)
 
-    def update(self):
+    def update(self) -> Callable[[], object]:
         self.notify.emit(self.get())
 
 
@@ -142,7 +141,7 @@ class PropertiesRef:
     def _list(self):
         return getattr(self._parent, Property.key_list)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[PropertyRef]:
         return (self[key] for key in self._list())
 
     def __contains__(self, key):
@@ -226,6 +225,8 @@ class PropertyMeta(type(QtCore.QObject)):
 
 
 class PropertyObject(QtCore.QObject, metaclass=PropertyMeta):
+    properties: PropertiesRef
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._set_property_defaults()

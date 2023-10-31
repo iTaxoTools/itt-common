@@ -33,14 +33,14 @@ class DecoratorDict(Generic[KeyType, DecoratedType]):
     def __init__(self):
         self.items = dict()
 
-    def __call__(self, key: KeyType) -> Callable[DecoratedType, DecoratedType]:
+    def __call__(self, key: KeyType) -> Callable[[DecoratedType], DecoratedType]:
         def decorator(func: DecoratedType) -> DecoratedType:
             self.items[key] = func
             return func
         return decorator
 
     def __getitem__(self, key: KeyType) -> DecoratedType:
-        if not key in self.items:
+        if key not in self.items:
             raise Exception('')
         return self.items[key]
 

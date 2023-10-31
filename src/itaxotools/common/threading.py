@@ -246,7 +246,7 @@ class Process(QtCore.QThread):
         self.worker = Worker(self)
         self.process = multiprocessing.Process(
             target=self.worker.target, daemon=True,
-            args=(function,)+args, kwargs=kwargs)
+            args=(function,) + args, kwargs=kwargs)
 
     def setStream(self, stream):
         """Send process output to given file-like stream"""
@@ -288,7 +288,7 @@ class Process(QtCore.QThread):
             self.pipeControl: self.handleControl,
             self.pipeOut: self.handleOut,
             self.pipeErr: self.handleErr,
-            }
+        }
         while waitList and sentinel is not None:
             readyList = multiprocessing.connection.wait(waitList.keys())
             for pipe in readyList:

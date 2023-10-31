@@ -52,7 +52,7 @@ class TaggedTransition(QtStateMachine.QSignalTransition):
 
     def __init__(
         self,
-        signal, # created with: Signal(object, list, dict)
+        signal,  # created with: Signal(object, list, dict)
         tag,
         filter=lambda e: True,
         effect=lambda e: None,
