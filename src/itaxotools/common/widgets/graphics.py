@@ -60,11 +60,11 @@ class VectorPixmap(QtGui.QPixmap):
 
 class VectorIcon(QtGui.QIcon):
     """A colored vector icon"""
-    def __init__(self, fileName, colormap_modes):
+    def __init__(self, fileName, colormap_modes, size=None):
         """Create pixmaps with colormaps matching the dictionary modes"""
         super().__init__()
         for mode in colormap_modes.keys():
-            pixmap = VectorPixmap(fileName, colormap=colormap_modes[mode])
+            pixmap = VectorPixmap(fileName, size=size, colormap=colormap_modes[mode])
             self.addPixmap(pixmap, mode)
 
 
