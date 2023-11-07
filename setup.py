@@ -12,7 +12,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='itaxotools-common',
-    version='0.3.0',
+    version='0.3.1',
     description='Common resources for iTaxoTools',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -23,9 +23,9 @@ setup(
         include=('itaxotools*',),
         where='src',
     ),
-    python_requires='>=3.8.6, <4',
+    python_requires='>=3.10.2, <4',
     extras_require={
-        'gui': ['pyside6>=6.1.1'],
+        'gui': ['pyside6>=6.6.0'],
         'dev': ['pyinstaller>=4.5.1', 'pytest', 'pytest-qt'],
     },
     entry_points={
