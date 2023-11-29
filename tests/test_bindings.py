@@ -1,10 +1,11 @@
 from itaxotools.common.bindings import Binder, Property, PropertyObject
 
 
-def test_simple_bind(qapp):
-    class DummyObject(PropertyObject):
-        dummy = Property(int, 0)
+class DummyObject(PropertyObject):
+    dummy = Property(int, 0)
 
+
+def test_simple_bind(qapp):
     a = DummyObject()
     b = DummyObject()
 
@@ -17,9 +18,6 @@ def test_simple_bind(qapp):
 
 
 def test_proxy_bind(qapp):
-    class DummyObject(PropertyObject):
-        dummy = Property(int, 0)
-
     a = DummyObject()
     b = DummyObject()
 
@@ -32,9 +30,6 @@ def test_proxy_bind(qapp):
 
 
 def test_conditional_bind(qapp):
-    class DummyObject(PropertyObject):
-        dummy = Property(int, 0)
-
     a = DummyObject()
     b = DummyObject()
 
@@ -51,9 +46,6 @@ def test_conditional_bind(qapp):
 
 
 def test_binder_update(qapp):
-    class DummyObject(PropertyObject):
-        dummy = Property(int, 0)
-
     a = DummyObject()
     b = DummyObject()
 
