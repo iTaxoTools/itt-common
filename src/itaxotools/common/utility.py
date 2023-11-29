@@ -21,8 +21,8 @@
 
 from typing import Callable, Generic, TypeVar
 
-KeyType = TypeVar('KeyType')
-DecoratedType = TypeVar('DecoratedType')
+KeyType = TypeVar("KeyType")
+DecoratedType = TypeVar("DecoratedType")
 
 
 class DecoratorDict(Generic[KeyType, DecoratedType]):
@@ -30,6 +30,7 @@ class DecoratorDict(Generic[KeyType, DecoratedType]):
     Instances can be used as decorators that accept a single key as argument.
     Decorated functions can then be accessed by key.
     """
+
     def __init__(self):
         self.items = dict()
 
@@ -37,11 +38,12 @@ class DecoratorDict(Generic[KeyType, DecoratedType]):
         def decorator(func: DecoratedType) -> DecoratedType:
             self.items[key] = func
             return func
+
         return decorator
 
     def __getitem__(self, key: KeyType) -> DecoratedType:
         if key not in self.items:
-            raise Exception('')
+            raise Exception("")
         return self.items[key]
 
     def __contains__(self, key) -> bool:
@@ -56,6 +58,7 @@ class DecoratorDict(Generic[KeyType, DecoratedType]):
 
 class AttrDict(dict):
     """Members can also be accessed as attributes"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.__dict__ = self
@@ -66,6 +69,7 @@ class AttrDict(dict):
 
 class Guard:
     """Should probably use threading.Lock"""
+
     def __init__(self):
         self.locked = False
 
@@ -91,11 +95,11 @@ def type_convert(value, type, default):
 
 
 def human_readable_size(size):
-    for unit in ['B', 'KB', 'MB', 'GB']:
-        if size < 1000.0 or unit == 'GB':
+    for unit in ["B", "KB", "MB", "GB"]:
+        if size < 1000.0 or unit == "GB":
             break
         size /= 1000.0
-    return f'{size:.2f} {unit}'
+    return f"{size:.2f} {unit}"
 
 
 def human_readable_seconds(seconds):
@@ -105,7 +109,7 @@ def human_readable_seconds(seconds):
     segments = [
         f'{int(h)} hour{"s" if h >= 2 else ""}' if h else None,
         f'{int(m)} minute{"s" if m >= 2 else ""}' if m else None,
-        f'{s:.2f} seconds' if s else None,
+        f"{s:.2f} seconds" if s else None,
     ]
     segments = (x for x in segments if x)
-    return ', '.join(segments)
+    return ", ".join(segments)

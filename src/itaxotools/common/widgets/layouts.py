@@ -24,39 +24,48 @@ from PySide6 import QtWidgets
 
 class Frame(QtWidgets.QFrame):
     """A slightly darker than the background frame"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setFrameStyle(QtWidgets.QFrame.StyledPanel)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             Frame {
                 background: rgba(0, 0, 0, 4);
                 border: 1px solid rgba(0, 0, 0, 24);
-            }""")
+            }"""
+        )
 
 
 class VLineSeparator(QtWidgets.QFrame):
     """Vertical line separator"""
+
     def __init__(self, width=2):
         super().__init__()
         self.setFixedWidth(width)
         self.setFrameShape(QtWidgets.QFrame.VLine)
         self.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             background: palette(Mid);
             border: none;
             margin: 4px;
-            """)
+            """
+        )
 
 
 class HLineSeparator(QtWidgets.QFrame):
     """Vertical line separator"""
+
     def __init__(self, height=2):
         super().__init__()
         self.setFixedHeight(height)
         self.setFrameShape(QtWidgets.QFrame.HLine)
         self.setFrameShadow(QtWidgets.QFrame.Plain)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             background: palette(Mid);
             border: none;
             margin: 4px;
-            """)
+            """
+        )

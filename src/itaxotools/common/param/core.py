@@ -63,7 +63,7 @@ Usage example:
 from copy import copy
 
 
-class Field():
+class Field:
     """
     Contains the Field value and other metadata.
     New values are cheked against type, list and range (if defined).
@@ -88,48 +88,51 @@ class Field():
         if isinstance(key, str) and key.isidentifier():
             self.key = key
         else:
-            raise TypeError(
-                f'key {repr(key)} is not a valid string identifier')
+            raise TypeError(f"key {repr(key)} is not a valid string identifier")
 
         # Assign these in order
-        if 'label' in kwargs:
-            self._label = kwargs.pop('label')
-        if 'type' in kwargs:
-            self.type = kwargs.pop('type')
-        if 'list' in kwargs:
-            self.list = kwargs.pop('list')
-        if 'range' in kwargs:
-            self.range = kwargs.pop('range')
-        if 'default' in kwargs:
-            self.default = kwargs.pop('default')
+        if "label" in kwargs:
+            self._label = kwargs.pop("label")
+        if "type" in kwargs:
+            self.type = kwargs.pop("type")
+        if "list" in kwargs:
+            self.list = kwargs.pop("list")
+        if "range" in kwargs:
+            self.range = kwargs.pop("range")
+        if "default" in kwargs:
+            self.default = kwargs.pop("default")
             self.value = self.default
-        if 'value' in kwargs:
-            self.value = kwargs.pop('value')
+        if "value" in kwargs:
+            self.value = kwargs.pop("value")
 
         for attr in kwargs:
             setattr(self, attr, kwargs[attr])
 
     def __str__(self):
-        return (f'{self.__class__.__name__}(\'{self.label}\': {self.value})')
+        return f"{self.__class__.__name__}('{self.label}': {self.value})"
 
     def __repr__(self):
-        parent = None if self._parent is None else (
-            f'{self._parent.__class__.__name__}'
-            f'({repr(self._parent.key)} at {hex(id(self._parent))})'
+        parent = (
+            None
+            if self._parent is None
+            else (
+                f"{self._parent.__class__.__name__}"
+                f"({repr(self._parent.key)} at {hex(id(self._parent))})"
             )
+        )
         return (
-            f'{self.__class__.__name__}('
-            f'key={repr(self.key)}, '
-            f'value={repr(self.value)}, '
-            f'type={repr(self.type)}, '
-            f'label={repr(self._label)}, '
-            f'doc={repr(self.doc)}, '
-            f'default={repr(self.default)}, '
-            f'list={repr(self.list)}, '
-            f'range={repr(self.range)}, '
-            f'parent={parent}'
-            f') at {hex(id(self))}'
-            )
+            f"{self.__class__.__name__}("
+            f"key={repr(self.key)}, "
+            f"value={repr(self.value)}, "
+            f"type={repr(self.type)}, "
+            f"label={repr(self._label)}, "
+            f"doc={repr(self.doc)}, "
+            f"default={repr(self.default)}, "
+            f"list={repr(self.list)}, "
+            f"range={repr(self.range)}, "
+            f"parent={parent}"
+            f") at {hex(id(self))}"
+        )
 
     def __eq__(self, other):
         return self.value == other
@@ -158,7 +161,7 @@ class Field():
 
     def _set_type(self, x):
         if not isinstance(x, type):
-            raise TypeError(f'new type {x} is not a type')
+            raise TypeError(f"new type {x} is not a type")
         self._type = x
 
     def _get_value(self):
@@ -168,25 +171,33 @@ class Field():
         """Check new value against type, range and list"""
         if not issubclass(self.type, type(None)):
             if not isinstance(x, self.type):
-                raise TypeError((
-                    f'new value {repr(x)} '
-                    f'for field {repr(self.key)} '
-                    f'not of type {self.type.__name__}'))
+                raise TypeError(
+                    (
+                        f"new value {repr(x)} "
+                        f"for field {repr(self.key)} "
+                        f"not of type {self.type.__name__}"
+                    )
+                )
         if self.list and x not in self.list:
-            raise ValueError((
-                f'new value {repr(x)} '
-                f'for field {repr(self.key)} '
-                f'not in list'))
+            raise ValueError(
+                (f"new value {repr(x)} " f"for field {repr(self.key)} " f"not in list")
+            )
         if self.range[0] is not None and x < self.range[0]:
-            raise ValueError((
-                f'new value {repr(x)} '
-                f'for field {repr(self.key)} '
-                f'is less than {self.range[0]}'))
+            raise ValueError(
+                (
+                    f"new value {repr(x)} "
+                    f"for field {repr(self.key)} "
+                    f"is less than {self.range[0]}"
+                )
+            )
         if self.range[1] is not None and x > self.range[1]:
-            raise ValueError((
-                f'new value {repr(x)} '
-                f'for field {repr(self.key)} '
-                f'is more than {self.range[1]}'))
+            raise ValueError(
+                (
+                    f"new value {repr(x)} "
+                    f"for field {repr(self.key)} "
+                    f"is more than {self.range[1]}"
+                )
+            )
         self._value = x
 
     def copy(self):
@@ -219,42 +230,51 @@ class Group(object):
         if isinstance(key, str) and key.isidentifier():
             self.key = key
         else:
-            raise TypeError(
-                f'key {repr(key)} is not a valid string identifier')
+            raise TypeError(f"key {repr(key)} is not a valid string identifier")
 
-        if 'label' in kwargs:
-            self._label = kwargs.pop('label')
-        if 'children' in kwargs:
-            for child in kwargs['children']:
+        if "label" in kwargs:
+            self._label = kwargs.pop("label")
+        if "children" in kwargs:
+            for child in kwargs["children"]:
                 self.add(child)
-            kwargs.pop('children')
+            kwargs.pop("children")
 
         for attr in kwargs:
             setattr(self, attr, kwargs[attr])
 
     def __str__(self):
         return (
-            f'{self.__class__.__name__}(\'{self.label}\': '
-            f'{list(self._children.keys())})')
+            f"{self.__class__.__name__}('{self.label}': "
+            f"{list(self._children.keys())})"
+        )
 
     def __repr__(self):
-        children = ', '.join([(
-            f'{self._children[x].__class__.__name__}'
-            f'({repr(x)} at {hex(id(self._children[x]))})'
-            ) for x in self._children])
-        parent = None if self._parent is None else (
-            f'{self._parent.__class__.__name__}'
-            f'({repr(self._parent.key)} at {hex(id(self._parent))})'
+        children = ", ".join(
+            [
+                (
+                    f"{self._children[x].__class__.__name__}"
+                    f"({repr(x)} at {hex(id(self._children[x]))})"
+                )
+                for x in self._children
+            ]
+        )
+        parent = (
+            None
+            if self._parent is None
+            else (
+                f"{self._parent.__class__.__name__}"
+                f"({repr(self._parent.key)} at {hex(id(self._parent))})"
             )
+        )
         return (
-            f'{self.__class__.__name__}('
-            f'key={repr(self.key)}, '
-            f'label={repr(self._label)}, '
-            f'doc={repr(self.doc)}, '
-            f'children=[{children}], '
-            f'parent={parent}'
-            f') at {hex(id(self))}'
-            )
+            f"{self.__class__.__name__}("
+            f"key={repr(self.key)}, "
+            f"label={repr(self._label)}, "
+            f"doc={repr(self.doc)}, "
+            f"children=[{children}], "
+            f"parent={parent}"
+            f") at {hex(id(self))}"
+        )
 
     def __getitem__(self, child):
         return self._children[child]
@@ -270,28 +290,27 @@ class Group(object):
         if key in self._children and isinstance(self._children[key], Field):
             self._children[key].value = x
         else:
-            raise TypeError(f'Group {repr(self.key)} has no Field \'{key}\'')
+            raise TypeError(f"Group {repr(self.key)} has no Field '{key}'")
 
     def __getattr__(self, attr):
         try:
-            super().__getattribute__('_children')
+            super().__getattribute__("_children")
         except AttributeError:
             return super().__getattribute__(attr)
         else:
             if attr in self._children:
                 return self[attr]
             else:
-                raise AttributeError(
-                    f'Group has no attribute or child {repr(attr)}')
+                raise AttributeError(f"Group has no attribute or child {repr(attr)}")
 
     def __setattr__(self, attr, x):
-        if hasattr(self, '_children') and attr in self._children:
+        if hasattr(self, "_children") and attr in self._children:
             self[attr] = x
         else:
             super().__setattr__(attr, x)
 
     def __delattr__(self, attr):
-        if hasattr(self, '_children') and attr in self._children:
+        if hasattr(self, "_children") and attr in self._children:
             del self[attr]
         else:
             super().__delattr__(attr)
@@ -305,11 +324,10 @@ class Group(object):
 
     def add(self, x):
         """Add a Field or Group while properly setting key and parent"""
-        if not ((isinstance(x, Field) or isinstance(x, Group))):
-            raise TypeError(f'new child {x} is not a Field or Group')
+        if not (isinstance(x, Field) or isinstance(x, Group)):
+            raise TypeError(f"new child {x} is not a Field or Group")
         if x.key in super().__dir__():
-            raise ValueError(
-                f'new child key {repr(x.key)} conflicts with Group dir')
+            raise ValueError(f"new child key {repr(x.key)} conflicts with Group dir")
         self._children[x.key] = x
         x._parent = self
 
@@ -322,8 +340,7 @@ class Group(object):
             elif isinstance(child, Group):
                 d[key] = child.dumps()
             else:
-                raise TypeError(
-                    f'unexpected child {repr(child)} of type {type(child)}')
+                raise TypeError(f"unexpected child {repr(child)} of type {type(child)}")
         return d
 
     def loads(self, data):
@@ -334,4 +351,4 @@ class Group(object):
             elif isinstance(self._children[key], Group):
                 self[key].loads(value)
             else:
-                raise KeyError(f'no child for key {repr(key)}')
+                raise KeyError(f"no child for key {repr(key)}")

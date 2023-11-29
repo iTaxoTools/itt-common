@@ -40,7 +40,7 @@ class TypeMeta(type):
     def __getattr__(self, attr):
         if attr in self._inheritors[self]:
             return self._inheritors[self][attr]
-        raise AttributeError(f'Type {repr(self.__name__)} has no subtype {repr(attr)}')
+        raise AttributeError(f"Type {repr(self.__name__)} has no subtype {repr(attr)}")
 
     def __iter__(self):
         return iter(self._inheritors[self].values())

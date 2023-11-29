@@ -11,7 +11,7 @@ import itaxotools
 
 def get_namespace_dirs():
     paths = [Path(path) for path in itaxotools.__path__]
-    return [str(path / '__pyinstaller') for path in paths]
+    return [str(path / "__pyinstaller") for path in paths]
 
 
 def get_hook_dirs():

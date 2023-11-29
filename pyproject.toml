@@ -42,4 +42,3 @@ Source = "https://github.com/StefanPatman/pypi-test"
 
 [tool.setuptools-git-versioning]
 enabled = true
-

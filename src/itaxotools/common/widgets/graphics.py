@@ -26,6 +26,7 @@ import re
 
 class VectorPixmap(QtGui.QPixmap):
     """A colored vector pixmap"""
+
     def __init__(self, fileName, size=None, colormap=None):
         """
         Load an SVG resource file and replace colors according to
@@ -46,20 +47,21 @@ class VectorPixmap(QtGui.QPixmap):
     def loadAndMap(fileName, colormap):
         file = QtCore.QFile(fileName)
         if not file.open(QtCore.QIODevice.ReadOnly):
-            raise FileNotFoundError('Vector resource not found: ' + fileName)
+            raise FileNotFoundError("Vector resource not found: " + fileName)
         text = file.readAll().data().decode()
         file.close()
 
         if colormap is not None:
-            regex = '(?P<color>'
-            regex += '|'.join(map(re.escape, colormap.keys()))+')'
-            text = re.sub(regex, lambda mo: colormap[mo.group('color')], text)
+            regex = "(?P<color>"
+            regex += "|".join(map(re.escape, colormap.keys())) + ")"
+            text = re.sub(regex, lambda mo: colormap[mo.group("color")], text)
 
         return QtCore.QByteArray(text.encode())
 
 
 class VectorIcon(QtGui.QIcon):
     """A colored vector icon"""
+
     def __init__(self, fileName, colormap_modes, size=None):
         """Create pixmaps with colormaps matching the dictionary modes"""
         super().__init__()
@@ -70,6 +72,7 @@ class VectorIcon(QtGui.QIcon):
 
 class ScalingImage(QtWidgets.QLabel):
     """Keep aspect ratio, width adjusts with height"""
+
     def __init__(self, pixmap=None):
         """Remember given pixmap and ratio"""
         super().__init__()
@@ -87,7 +90,7 @@ class ScalingImage(QtWidgets.QLabel):
     @logo.setter
     def logo(self, logo):
         self._logo = logo
-        self._ratio = logo.width()/logo.height()
+        self._ratio = logo.width() / logo.height()
         self._scale()
 
     def _scale(self):
@@ -96,8 +99,11 @@ class ScalingImage(QtWidgets.QLabel):
             return
         h = self.height()
         w = h * self._ratio
-        self.setPixmap(self._logo.scaled(
-            w, h, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation))
+        self.setPixmap(
+            self._logo.scaled(
+                w, h, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation
+            )
+        )
 
     def minimumSizeHint(self):
         return QtCore.QSize(1, 1)

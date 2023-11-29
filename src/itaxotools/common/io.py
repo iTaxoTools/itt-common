@@ -25,7 +25,7 @@ from contextlib import contextmanager
 
 
 @contextmanager
-def _redirect(module=sys, stream='stdout', dest=None):
+def _redirect(module=sys, stream="stdout", dest=None):
     """Redirect module stream to file stream"""
     original = getattr(module, stream)
     if original is not None:
@@ -39,7 +39,7 @@ def _redirect(module=sys, stream='stdout', dest=None):
 
 
 @contextmanager
-def redirect(module=sys, stream='stdout', dest=None, mode='w'):
+def redirect(module=sys, stream="stdout", dest=None, mode="w"):
     """
     Redirect module's stream according to `dest`:
     - If None: Do nothing
@@ -58,15 +58,16 @@ def redirect(module=sys, stream='stdout', dest=None, mode='w'):
 
 class PipeIO(io.IOBase):
     """File-like object that writes to a pipe connection"""
+
     # ? There are possibly better ways to do this
     # ? Todo- implement read
     def __init__(self, connection, mode):
         super().__init__()
         self._pid = os.getpid()
-        self._cache = ''
+        self._cache = ""
         self.connection = connection
-        self.buffer = ''
-        if not (mode == 'r' or mode == 'w'):
+        self.buffer = ""
+        if not (mode == "r" or mode == "w"):
             raise ValueError("Invalid mode: '{}'".format(str(mode)))
         self.mode = mode
 
@@ -76,7 +77,7 @@ class PipeIO(io.IOBase):
         pid = os.getpid()
         if pid != self._pid:
             self._pid = pid
-            self._cache = ''
+            self._cache = ""
         return self._cache
 
     @cache.setter
@@ -92,16 +93,16 @@ class PipeIO(io.IOBase):
         return self.connection.fileno()
 
     def readable(self):
-        return self.mode == 'r'
+        return self.mode == "r"
 
     def read(self, size=-1):
         if not self.readable():
-            raise io.UnsupportedOperation('not readable')
+            raise io.UnsupportedOperation("not readable")
         if size < 0:
-            if self.cache == '':
+            if self.cache == "":
                 self.cache = self.connection.recv()
             result = self.cache
-            self.cache = ''
+            self.cache = ""
             return result
         while len(self.cache) < size:
             self.cache += self.connection.recv()
@@ -116,11 +117,11 @@ class PipeIO(io.IOBase):
     #     pass
 
     def writable(self):
-        return self.mode == 'w'
+        return self.mode == "w"
 
     def write(self, text):
         if not self.writable():
-            raise io.UnsupportedOperation('not writable')
+            raise io.UnsupportedOperation("not writable")
         # no buff, just send
         self.connection.send(text)
         # temp = self.buffer + text
@@ -133,12 +134,12 @@ class PipeIO(io.IOBase):
 
     def writelines(self, lines):
         for line in lines:
-            self.connection.send(line+'\n')
+            self.connection.send(line + "\n")
 
     def flush(self):
-        if self.buffer != '':
+        if self.buffer != "":
             self.connection.send(self.buffer)
-        self.buffer = ''
+        self.buffer = ""
 
 
 class TextEditLoggerIO(io.IOBase):
@@ -164,7 +165,7 @@ class TextEditLoggerIO(io.IOBase):
         self.widget.append(text)
 
     def writeline(self, line):
-        self.write(line+'\n')
+        self.write(line + "\n")
 
     def writelines(self, lines):
         for line in lines:

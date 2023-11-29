@@ -26,9 +26,9 @@ import sys
 
 def _package_path_pyinstaller(package):
     if isinstance(package, str):
-        parts = package.split('.')
+        parts = package.split(".")
     elif isinstance(package, type(sys)):
-        parts = package.__name__.split('.')
+        parts = package.__name__.split(".")
     else:
         return None
     path = pathlib.Path(sys._MEIPASS)
@@ -54,10 +54,10 @@ def _package_path_importlib(package):
 
 try:
     import importlib.resources
-    from importlib.resources import files
+
     package_path = _package_path_importlib
 except (ModuleNotFoundError, ImportError):
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         package_path = _package_path_pyinstaller
     else:
         package_path = _package_path_file

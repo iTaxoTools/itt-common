@@ -40,11 +40,12 @@ class TaggedEvent(QtStateMachine.QStateMachine.SignalEvent):
 
     @staticmethod
     def isValidCast(event):
-        return (isinstance(event, QtStateMachine.QStateMachine.SignalEvent)
-                and len(event.arguments()) == 3
-                and isinstance(event.arguments()[1], list)
-                and isinstance(event.arguments()[2], dict)
-                )
+        return (
+            isinstance(event, QtStateMachine.QStateMachine.SignalEvent)
+            and len(event.arguments()) == 3
+            and isinstance(event.arguments()[1], list)
+            and isinstance(event.arguments()[2], dict)
+        )
 
 
 class TaggedTransition(QtStateMachine.QSignalTransition):

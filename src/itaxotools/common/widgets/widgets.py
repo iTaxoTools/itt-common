@@ -23,6 +23,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 class TextEditLogger(QtWidgets.QPlainTextEdit):
     """Thread-safe log display in a QPlainTextEdit"""
+
     _appendSignal = QtCore.Signal(object)
     _resetSignal = QtCore.Signal()
 
@@ -54,7 +55,7 @@ class SearchWidget(QtWidgets.QLineEdit):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setPlaceholderText('Search')
+        self.setPlaceholderText("Search")
         self.setStyleSheet(
             """
             SearchWidget {
@@ -67,7 +68,8 @@ class SearchWidget(QtWidgets.QLineEdit):
             SearchWidget:focus {
                 border: 1px solid Palette(Highlight);
                 }
-            """)
+            """
+        )
 
     def setSearchAction(self, action):
         """Bind a QAction to the widget"""

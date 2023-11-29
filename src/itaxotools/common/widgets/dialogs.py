@@ -30,14 +30,16 @@ from .layouts import VLineSeparator
 
 class PushButton(QtWidgets.QPushButton):
     """A larger button with square borders"""
+
     def __init__(self, *args, **kwargs):
         onclick = None
-        if 'onclick' in kwargs:
-            onclick = kwargs.pop('onclick')
+        if "onclick" in kwargs:
+            onclick = kwargs.pop("onclick")
         super().__init__(*args, **kwargs)
         if onclick:
             self.clicked.connect(onclick)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QPushButton {
                 border: 1px solid Palette(Mid);
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -74,47 +76,56 @@ class PushButton(QtWidgets.QPushButton):
                     stop: 0 Palette(Midlight), stop: 1 Palette(Dark));
                 background: Palette(Midlight);
                 color: Palette(Dark)
-        }""")
+        }"""
+        )
 
 
 class _HeaderLabels(QtWidgets.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.tool = QtWidgets.QLabel('TOOL')
+        self.tool = QtWidgets.QLabel("TOOL")
         self.tool.setAlignment(QtCore.Qt.AlignBottom)
-        self.tool.setStyleSheet("""
+        self.tool.setStyleSheet(
+            """
             color: palette(Text);
             font-size: 14px;
             letter-spacing: 1px;
             font-weight: bold;
             text-decoration: underline;
-            """)
+            """
+        )
 
-        self.citation = QtWidgets.QLabel('CITATION')
+        self.citation = QtWidgets.QLabel("CITATION")
         self.citation.setAlignment(QtCore.Qt.AlignBottom)
-        self.citation.setStyleSheet("""
+        self.citation.setStyleSheet(
+            """
             color: palette(Shadow);
             font-size: 12px;
             font-style: italic;
-            """)
+            """
+        )
 
-        self.task = QtWidgets.QLabel('TASK')
+        self.task = QtWidgets.QLabel("TASK")
         self.task.setAlignment(QtCore.Qt.AlignBottom)
-        self.task.setStyleSheet("""
+        self.task.setStyleSheet(
+            """
             color: palette(Shadow);
             font-size: 14px;
             font-weight: bold;
             letter-spacing: 1px;
-            """)
+            """
+        )
 
-        self.description = QtWidgets.QLabel('DESCRIPTION')
+        self.description = QtWidgets.QLabel("DESCRIPTION")
         self.description.setAlignment(QtCore.Qt.AlignTop)
-        self.description.setStyleSheet("""
+        self.description.setStyleSheet(
+            """
             color: palette(Text);
             font-size: 12px;
             letter-spacing: 1px;
-            """)
+            """
+        )
 
         layout = QtWidgets.QGridLayout()
         layout.setRowStretch(0, 2)
@@ -138,11 +149,11 @@ class _HeaderToolBar(QtWidgets.QToolBar):
         super().__init__(*args, **kwargs)
         self.setIconSize(QtCore.QSize(32, 32))
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Minimum)
-        self.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        self.setStyleSheet("""
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum
+        )
+        self.setToolButtonStyle(QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
+        self.setStyleSheet(
+            """
             QToolBar {
                 spacing: 2px;
                 }
@@ -186,7 +197,8 @@ class _HeaderToolBar(QtWidgets.QToolBar):
             QToolButton::menu-indicator:pressed {
                 border-bottom: 0px;
                 }
-            """)
+            """
+        )
 
 
 class Header(QtWidgets.QFrame):
@@ -194,24 +206,27 @@ class Header(QtWidgets.QFrame):
     The Taxotools toolbar, with space for a title, description,
     citations and two logos.
     """
+
     def __init__(self):
         super().__init__()
-        self.dictTool = {'title': '', 'citation': '', 'description': ''}
-        self.dictTask = {'title': '', 'description': ''}
+        self.dictTool = {"title": "", "citation": "", "description": ""}
+        self.dictTask = {"title": "", "description": ""}
         self._logoTool = None
         self.draw()
 
     def draw(self):
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Maximum)
-        self.setStyleSheet("""
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum
+        )
+        self.setStyleSheet(
+            """
             Header {
                 background: palette(Light);
                 border-top: 1px solid palette(Mid);
                 border-bottom: 1px solid palette(Dark);
                 }
-            """)
+            """
+        )
 
         self.labels = _HeaderLabels()
         self.widgetLogoTool = QtWidgets.QLabel()
@@ -243,9 +258,9 @@ class Header(QtWidgets.QFrame):
         d = {k: v for k, v in kwargs.items() if v is not None}
         d = {k: v for k, v in d.items() if k in self.dictTool.keys()}
         self.dictTool.update(d)
-        self.labels.tool.setText(self.dictTool['title'])
-        self.labels.citation.setText(self.dictTool['citation'])
-        self.labels.description.setText(self.dictTool['description'])
+        self.labels.tool.setText(self.dictTool["title"])
+        self.labels.citation.setText(self.dictTool["citation"])
+        self.labels.description.setText(self.dictTool["description"])
         self.labels.task.setVisible(False)
         self.labels.tool.setVisible(True)
         self.labels.citation.setVisible(True)
@@ -254,8 +269,8 @@ class Header(QtWidgets.QFrame):
         d = {k: v for k, v in kwargs.items() if v is not None}
         d = {k: v for k, v in d.items() if k in self.dictTask.keys()}
         self.dictTask.update(d)
-        self.labels.task.setText(self.dictTask['title'])
-        self.labels.description.setText(self.dictTask['description'])
+        self.labels.task.setText(self.dictTask["title"])
+        self.labels.description.setText(self.dictTask["description"])
         self.labels.tool.setVisible(False)
         self.labels.citation.setVisible(False)
         self.labels.task.setVisible(True)
@@ -287,6 +302,7 @@ class HeaderOld(QtWidgets.QFrame):
     The Taxotools toolbar, with space for a title, description,
     citations and two logos.
     """
+
     def __init__(self):
         """ """
         super().__init__()
@@ -302,31 +318,38 @@ class HeaderOld(QtWidgets.QFrame):
 
     def draw(self):
         """ """
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             HeaderOld {
                 background: palette(Light);
                 border-top: 2px solid palette(Mid);
                 border-bottom: 1px solid palette(Dark);
                 }
-            """)
+            """
+        )
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum)
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum
+        )
 
-        self.labelDescription = QtWidgets.QLabel('DESCRIPTION')
+        self.labelDescription = QtWidgets.QLabel("DESCRIPTION")
         self.labelDescription.setAlignment(QtCore.Qt.AlignBottom)
-        self.labelDescription.setStyleSheet("""
+        self.labelDescription.setStyleSheet(
+            """
             color: palette(Text);
             font-size: 12px;
             font-weight: bold;
             letter-spacing: 1px;
-            """)
+            """
+        )
 
-        self.labelCitation = QtWidgets.QLabel('CITATION')
+        self.labelCitation = QtWidgets.QLabel("CITATION")
         self.labelCitation.setAlignment(QtCore.Qt.AlignTop)
-        self.labelCitation.setStyleSheet("""
+        self.labelCitation.setStyleSheet(
+            """
             color: palette(Shadow);
             font-size: 12px;
-            """)
+            """
+        )
 
         labels = QtWidgets.QVBoxLayout()
         labels.addStretch(1)
@@ -342,15 +365,18 @@ class HeaderOld(QtWidgets.QFrame):
         self.labelLogoProject = ScalingImage()
         layoutLogoProject = QtWidgets.QHBoxLayout()
         layoutLogoProject.addWidget(self.labelLogoProject)
-        layoutLogoProject.setContentsMargins(2,4,2,4)
+        layoutLogoProject.setContentsMargins(2, 4, 2, 4)
 
         self.toolbar = QtWidgets.QToolBar()
-        self.toolbar.setIconSize(QtCore.QSize(32,32))
+        self.toolbar.setIconSize(QtCore.QSize(32, 32))
         self.toolbar.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum)
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Minimum
+        )
         self.toolbar.setToolButtonStyle(
-            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon)
-        self.toolbar.setStyleSheet("""
+            QtCore.Qt.ToolButtonStyle.ToolButtonTextUnderIcon
+        )
+        self.toolbar.setStyleSheet(
+            """
             QToolBar {
                 spacing: 2px;
                 }
@@ -394,7 +420,8 @@ class HeaderOld(QtWidgets.QFrame):
             QToolButton::menu-indicator:pressed {
                 border-bottom: 0px;
                 }
-            """)
+            """
+        )
 
         layout = QtWidgets.QHBoxLayout()
         layout.addSpacing(8)
@@ -455,19 +482,22 @@ class HeaderOld(QtWidgets.QFrame):
 
 class Subheader(QtWidgets.QFrame):
     """A simple styled frame"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setSizePolicy(
-            QtWidgets.QSizePolicy.Policy.Minimum,
-            QtWidgets.QSizePolicy.Policy.Maximum)
-        self.setStyleSheet("""
+            QtWidgets.QSizePolicy.Policy.Minimum, QtWidgets.QSizePolicy.Policy.Maximum
+        )
+        self.setStyleSheet(
+            """
             QFrame {
                 background-color: palette(Midlight);
                 border-style: solid;
                 border-width: 1px 0px 1px 0px;
                 border-color: palette(Mid);
                 }
-            """)
+            """
+        )
 
 
 class NavigationButton(PushButton):
@@ -486,6 +516,7 @@ def _mode_method(mode):
     Class method decorator that populates `_mode_methods` with the
     given mode, pointing to the decorated function, for use by setMode().
     """
+
     class ModeMethod:
         def __init__(self, method):
             self.method = method
@@ -496,6 +527,7 @@ def _mode_method(mode):
         def __set_name__(self, owner, name):
             owner._mode_methods[mode] = self.method
             setattr(owner, name, self.method)
+
     return ModeMethod
 
 
@@ -520,19 +552,21 @@ class NavigationFooter(QtWidgets.QFrame):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setStyleSheet("""
+        self.setStyleSheet(
+            """
             QFrame {
                 border-style: solid;
                 border-width: 1px 0px 0px 0px;
                 border-color: Palette(Mid);
                 }
-            """)
+            """
+        )
 
-        self.back = self.addButton('< &Back')
-        self.next = self.addButton('&Next >')
-        self.exit = self.addButton('E&xit')
-        self.cancel = self.addButton('&Cancel')
-        self.new = self.addButton('&New')
+        self.back = self.addButton("< &Back")
+        self.next = self.addButton("&Next >")
+        self.exit = self.addButton("E&xit")
+        self.cancel = self.addButton("&Cancel")
+        self.new = self.addButton("&New")
 
         layout = QtWidgets.QHBoxLayout()
         layout.addWidget(self.cancel)
@@ -563,7 +597,7 @@ class NavigationFooter(QtWidgets.QFrame):
             for button in self._buttons:
                 button.setText()
         else:
-            raise ValueError(f'Mode {mode} has no matching method.')
+            raise ValueError(f"Mode {mode} has no matching method.")
 
     def setButtonMode(self, button, mode):
         button.setVisible(mode != self.ButtonMode.Hidden)
@@ -632,6 +666,7 @@ class Panel(QtWidgets.QWidget):
     Set `self.title`, `self.footer` and `self.flag` with text.
     Use `self.body.addWidget()`` to populate the pane.
     """
+
     def __init__(self, parent):
         """Initialize internal vars"""
         super().__init__(parent=parent)
@@ -646,10 +681,11 @@ class Panel(QtWidgets.QWidget):
 
     def draw(self):
         """ """
-        self.labelTitle = QtWidgets.QLabel('TITLE GO HERE')
+        self.labelTitle = QtWidgets.QLabel("TITLE GO HERE")
         self.labelTitle.setIndent(4)
         self.labelTitle.setMargin(2)
-        self.labelTitle.setStyleSheet("""
+        self.labelTitle.setStyleSheet(
+            """
             QLabel {
                 font-size: 14px;
                 font-weight: bold;
@@ -667,13 +703,15 @@ class Panel(QtWidgets.QWidget):
                 border-right: 1px solid palette(Mid);
                 border-bottom: 2px solid palette(Mid);
                 }
-            """)
+            """
+        )
 
-        self.labelFlag = QtWidgets.QLabel('')
+        self.labelFlag = QtWidgets.QLabel("")
         self.labelFlag.setVisible(False)
         self.labelFlag.setIndent(4)
         self.labelFlag.setMargin(2)
-        self.labelFlag.setStyleSheet("""
+        self.labelFlag.setStyleSheet(
+            """
             QLabel {
                 font-size: 12px;
                 font-weight: bold;
@@ -691,14 +729,16 @@ class Panel(QtWidgets.QWidget):
                 border-right: 1px solid palette(Light);
                 border-bottom: 2px solid palette(Light);
                 }
-            """)
+            """
+        )
 
         # To be filled by user
         self.body = QtWidgets.QVBoxLayout()
 
-        self.labelFoot = QtWidgets.QLabel('FOOTER')
+        self.labelFoot = QtWidgets.QLabel("FOOTER")
         self.labelFoot.setAlignment(QtCore.Qt.AlignCenter)
-        self.labelFoot.setStyleSheet("""
+        self.labelFoot.setStyleSheet(
+            """
             QLabel {
                 color: palette(Shadow);
                 background: palette(Window);
@@ -710,7 +750,8 @@ class Panel(QtWidgets.QWidget):
                 background: palette(Window);
                 border: 1px solid palette(Mid);
                 }
-            """)
+            """
+        )
 
         layoutTop = QtWidgets.QHBoxLayout()
         layoutTop.addWidget(self.labelTitle, 1)
@@ -757,7 +798,7 @@ class Panel(QtWidgets.QWidget):
         if flagTip is not None:
             self.labelFlag.setToolTip(flagTip)
         else:
-            self.labelFlag.setToolTip('')
+            self.labelFlag.setToolTip("")
         self._flagTip = flagTip
 
     @property
@@ -766,7 +807,7 @@ class Panel(QtWidgets.QWidget):
 
     @footer.setter
     def footer(self, footer):
-        self.labelFoot.setVisible(footer != '')
+        self.labelFoot.setVisible(footer != "")
         self.labelFoot.setText(footer)
         self._foot = footer
 
@@ -777,10 +818,11 @@ class ToolDialog(QtWidgets.QWidget):
     Handles notification sub-dialogs.
     Asks for verification before closing.
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.setWindowFlags(QtCore.Qt.Window)
-        self.title = 'iTaxoTools'
+        self.title = "iTaxoTools"
 
     def closeEvent(self, event):
         """Called on window close"""
@@ -795,9 +837,8 @@ class ToolDialog(QtWidgets.QWidget):
         msgBox = QtWidgets.QMessageBox(self)
         msgBox.setWindowTitle(self.title)
         msgBox.setIcon(QtWidgets.QMessageBox.Question)
-        msgBox.setText('Are you sure you want to quit?')
-        msgBox.setStandardButtons(
-            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        msgBox.setText("Are you sure you want to quit?")
+        msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
         msgBox.setDefaultButton(QtWidgets.QMessageBox.Yes)
         confirm = self.msgShow(msgBox)
         return confirm == QtWidgets.QMessageBox.Yes
@@ -821,7 +862,7 @@ class ToolDialog(QtWidgets.QWidget):
         msgBox = QtWidgets.QMessageBox(self)
         msgBox.setWindowTitle(self.title)
         msgBox.setIcon(QtWidgets.QMessageBox.Critical)
-        msgBox.setText('An exception occured:')
+        msgBox.setText("An exception occured:")
         msgBox.setInformativeText(str(exception))
         msgBox.setDetailedText(traceback.format_exc())
         msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)

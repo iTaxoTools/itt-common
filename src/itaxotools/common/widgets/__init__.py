@@ -1,4 +1,3 @@
-
 """Custom PySide6 widgets for iTaxoTools"""
 
 # flake8: noqa

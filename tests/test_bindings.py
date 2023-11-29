@@ -6,7 +6,6 @@ class DummyObject(PropertyObject):
 
 
 def test_simple_bind():
-
     a = DummyObject()
     b = DummyObject()
 
@@ -19,12 +18,11 @@ def test_simple_bind():
 
 
 def test_proxy_bind():
-
     a = DummyObject()
     b = DummyObject()
 
     binder = Binder()
-    binder.bind(a.properties.dummy, b.properties.dummy, proxy = lambda x: x + 1)
+    binder.bind(a.properties.dummy, b.properties.dummy, proxy=lambda x: x + 1)
 
     assert b.dummy == 1
     a.dummy = 42
@@ -32,12 +30,11 @@ def test_proxy_bind():
 
 
 def test_conditional_bind():
-
     a = DummyObject()
     b = DummyObject()
 
     binder = Binder()
-    binder.bind(a.properties.dummy, b.properties.dummy, condition = lambda x: x > 10)
+    binder.bind(a.properties.dummy, b.properties.dummy, condition=lambda x: x > 10)
 
     assert b.dummy == 0
 
@@ -49,7 +46,6 @@ def test_conditional_bind():
 
 
 def test_binder_update():
-
     a = DummyObject()
     b = DummyObject()
 
@@ -67,21 +63,19 @@ def test_binder_update():
 
 
 def test_property_tags():
-
     class DummyTaggedObject(PropertyObject):
-        x = Property(int, 0, tag='x')
-        y = Property(int, 0, tag='y')
+        x = Property(int, 0, tag="x")
+        y = Property(int, 0, tag="y")
         z = Property(int, 0)
 
     a = DummyTaggedObject()
 
-    assert a.properties.x.tag == 'x'
-    assert a.properties.y.tag == 'y'
+    assert a.properties.x.tag == "x"
+    assert a.properties.y.tag == "y"
     assert a.properties.z.tag is None
 
 
 def test_property_iteration():
-
     class DummyTaggedObject(PropertyObject):
         x = Property(int, 1)
         y = Property(int, 2)
@@ -89,5 +83,5 @@ def test_property_iteration():
 
     a = DummyTaggedObject()
 
-    assert [x.key for x in a.properties] == ['x', 'y', 'z']
+    assert [x.key for x in a.properties] == ["x", "y", "z"]
     assert [x.value for x in a.properties] == [1, 2, 3]

@@ -27,10 +27,8 @@ from . import Field, Group
 
 
 class Model(QAbstractItemModel):
-
     DataRole = Qt.ItemDataRole.UserRole
-    columns = ['key', 'label', 'value', 'doc',
-               'list', 'range', 'type', 'default']
+    columns = ["key", "label", "value", "doc", "list", "range", "type", "default"]
 
     def __init__(self, group, parent=None):
         super().__init__(parent)
@@ -89,8 +87,9 @@ class Model(QAbstractItemModel):
                 return str(getattr(item, attr))
             except AttributeError:
                 return None
-        elif (role == Qt.ItemDataRole.ToolTipRole or
-                role == Qt.ItemDataRole.WhatsThisRole):
+        elif (
+            role == Qt.ItemDataRole.ToolTipRole or role == Qt.ItemDataRole.WhatsThisRole
+        ):
             return item.doc
         elif role == self.DataRole:
             return item
@@ -114,22 +113,25 @@ class Model(QAbstractItemModel):
             return Qt.ItemFlag.NoItemFlags
         item = index.internalPointer()
         flag = Qt.ItemFlag.NoItemFlags
-        if (isinstance(item, Field) and
-                self.columns[index.column()] == 'value'):
+        if isinstance(item, Field) and self.columns[index.column()] == "value":
             flag = Qt.ItemFlag.ItemIsEditable
         return super().flags(index) | flag
 
-    def headerData(self, section, orientation,
-                   role=Qt.ItemDataRole.DisplayRole):
-        if (orientation == Qt.Orientation.Horizontal and
-                role == Qt.ItemDataRole.DisplayRole):
+    def headerData(self, section, orientation, role=Qt.ItemDataRole.DisplayRole):
+        if (
+            orientation == Qt.Orientation.Horizontal
+            and role == Qt.ItemDataRole.DisplayRole
+        ):
             return self.headers[section]
         return None
 
-    def setHeaderData(self, section, orientation, value,
-                      role=Qt.ItemDataRole.DisplayRole):
-        if (orientation == Qt.Orientation.Horizontal and
-                role == Qt.ItemDataRole.DisplayRole):
+    def setHeaderData(
+        self, section, orientation, value, role=Qt.ItemDataRole.DisplayRole
+    ):
+        if (
+            orientation == Qt.Orientation.Horizontal
+            and role == Qt.ItemDataRole.DisplayRole
+        ):
             self.headers[section] = value
             self.headerDataChanged.emit(orientation, section, section)
             return True

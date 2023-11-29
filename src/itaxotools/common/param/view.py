@@ -24,14 +24,27 @@ Parameter view for PySide6
 from PySide6.QtCore import QModelIndex, QRect, QSize, Qt, Signal
 from PySide6.QtGui import QDoubleValidator, QIntValidator, QValidator
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QFrame, QGroupBox, QHBoxLayout, QLabel, QLayout,
-    QLineEdit, QMessageBox, QPushButton, QScrollArea, QVBoxLayout, QWidget)
+    QCheckBox,
+    QComboBox,
+    QFrame,
+    QGroupBox,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QScrollArea,
+    QVBoxLayout,
+    QWidget,
+)
 
 from . import Field
 
 
 class FieldLayout(QLayout):
     """Last widget added has the same width for all instances"""
+
     def __init__(self, label, widget, parent=None):
         super().__init__(parent)
         self.itemList = []
@@ -83,7 +96,6 @@ class FieldLayout(QLayout):
 
 
 class FieldWidget(QFrame):
-
     # Emit (_index, value) when user changes the field value
     dataChanged = Signal(object, object)
 
@@ -106,7 +118,6 @@ class FieldWidget(QFrame):
 
 
 class BoolWidget(FieldWidget):
-
     dataChanged = Signal(object, object)
 
     def __init__(self, index, field, view, parent=None):
@@ -153,10 +164,9 @@ class EmptyOrDoubleValidator(QDoubleValidator):
 
 
 class EntryWidget(FieldWidget):
-
     def __init__(self, index, field, view, parent=None):
         super().__init__(index, field, view, parent)
-        self.label = QLabel(self._field.label + ': ')
+        self.label = QLabel(self._field.label + ": ")
         self.entry = QLineEdit()
         self.entry.editingFinished.connect(self.onDataChange)
         if issubclass(self._field.type, int):
@@ -190,10 +200,9 @@ class NoWheelComboBox(QComboBox):
 
 
 class ListWidget(FieldWidget):
-
     def __init__(self, index, field, view, parent=None):
         super().__init__(index, field, view, parent)
-        self.label = QLabel(self._field.label + ': ')
+        self.label = QLabel(self._field.label + ": ")
         self.combo = NoWheelComboBox()
         # self.combo.setFocusPolicy(Qt.StrongFocus)
         self.combo.currentIndexChanged.connect(self.onDataChange)
@@ -234,6 +243,7 @@ class ListWidget(FieldWidget):
 
 class View(QScrollArea):
     """Widget-based view for param.Model"""
+
     # Emited for every index when model data change
     dataChanged = Signal(object)
 
@@ -268,7 +278,8 @@ class View(QScrollArea):
     def draw(self):
         widget = self._populate(self._rootIndex, 0)
         self.setWidget(widget)
-        widget.setStyleSheet("""
+        widget.setStyleSheet(
+            """
             FieldWidget[depth="1"] {
                 margin-left: 1px;
                 margin-right: 10px;
@@ -300,12 +311,13 @@ class View(QScrollArea):
                 subcontrol-position: top left;
                 padding: 4px -1px;
                 }
-        """)
+        """
+        )
         widget.show()
 
     def onInvalidValue(self, error):
         """Called when a field value was invalid"""
-        QMessageBox.warning(self, 'Warning', error)
+        QMessageBox.warning(self, "Warning", error)
 
     def addCustomParamWidget(self, param, _class):
         """The view for `param` will be an instance of `_class`"""
@@ -315,12 +327,11 @@ class View(QScrollArea):
     def onModelDataChange(self, topLeft, bottomRight, roles):
         """Send signal updates for all indices changed"""
         if bottomRight.parent() != topLeft.parent():
-            raise RuntimeError(
-                'View: Model dataChanged items have different parents')
+            raise RuntimeError("View: Model dataChanged items have different parents")
         parent = topLeft.parent()
         top = topLeft.row()
         bottom = bottomRight.row()
-        for row in range(top, bottom+1):
+        for row in range(top, bottom + 1):
             index = self._model.index(row, 0, parent)
             self.dataChanged.emit(index)
 
@@ -339,7 +350,7 @@ class View(QScrollArea):
             float: EntryWidget,
             str: EntryWidget,
             int: EntryWidget,
-            }
+        }
         if id(field) in self._customParamClass:
             _class = self._customParamClass[id(field)]
             widget = _class(index, field, self)
@@ -349,7 +360,7 @@ class View(QScrollArea):
             widget = type_to_widget[field.type](index, field, self)
         else:
             widget = EntryWidget(index, field, self)
-        widget.setProperty('depth', depth)
+        widget.setProperty("depth", depth)
         return widget
 
     def _populate(self, index, depth=0):
@@ -374,11 +385,11 @@ class View(QScrollArea):
         rows = self._model.rowCount(index)
         for row in range(0, rows):
             childIndex = self._model.index(row, 0, index)
-            child = self._populate(childIndex, depth+1)
+            child = self._populate(childIndex, depth + 1)
             layout.addWidget(child)
 
         if self.showResetButton and depth == 0:
-            resetButton = QPushButton('Reset to defaults')
+            resetButton = QPushButton("Reset to defaults")
             resetButton.setAutoDefault(False)
             resetButton.clicked.connect(self._resetParams)
             layout.addWidget(resetButton)
@@ -392,8 +403,10 @@ class View(QScrollArea):
 
 # PlainView + View to be refactored
 
+
 class PlainView(QWidget):
     """Widget-based view for param.Model"""
+
     # Emited for every index when model data change
     dataChanged = Signal(object)
 
@@ -437,7 +450,7 @@ class PlainView(QWidget):
 
     def onInvalidValue(self, error):
         """Called when a field value was invalid"""
-        QMessageBox.warning(self, 'Warning', error)
+        QMessageBox.warning(self, "Warning", error)
 
     def addCustomParamWidget(self, param, _class):
         """The view for `param` will be an instance of `_class`"""
@@ -447,12 +460,11 @@ class PlainView(QWidget):
     def onModelDataChange(self, topLeft, bottomRight, roles):
         """Send signal updates for all indices changed"""
         if bottomRight.parent() != topLeft.parent():
-            raise RuntimeError(
-                'View: Model dataChanged items have different parents')
+            raise RuntimeError("View: Model dataChanged items have different parents")
         parent = topLeft.parent()
         top = topLeft.row()
         bottom = bottomRight.row()
-        for row in range(top, bottom+1):
+        for row in range(top, bottom + 1):
             index = self._model.index(row, 0, parent)
             self.dataChanged.emit(index)
 
@@ -471,7 +483,7 @@ class PlainView(QWidget):
             float: EntryWidget,
             str: EntryWidget,
             int: EntryWidget,
-            }
+        }
         if id(field) in self._customParamClass:
             _class = self._customParamClass[id(field)]
             widget = _class(index, field, self)
@@ -481,7 +493,7 @@ class PlainView(QWidget):
             widget = type_to_widget[field.type](index, field, self)
         else:
             widget = EntryWidget(index, field, self)
-        widget.setProperty('depth', depth)
+        widget.setProperty("depth", depth)
         return widget
 
     def _populate(self, index, depth=0):
@@ -497,6 +509,6 @@ class PlainView(QWidget):
         rows = self._model.rowCount(index)
         for row in range(0, rows):
             childIndex = self._model.index(row, 0, index)
-            child = self._populate(childIndex, depth+1)
+            child = self._populate(childIndex, depth + 1)
             if child is not None:
                 self.layout().addWidget(child)

@@ -29,19 +29,19 @@ from . import io
 
 class FailedError(Exception):
     def __init__(self, code=1):
-        super().__init__(f'Thread failed with code: {code}')
+        super().__init__(f"Thread failed with code: {code}")
         self.code = code
 
 
 class CancelledError(Exception):
     def __init__(self, code=-1):
-        super().__init__(f'Thread cancelled with code: {code}')
+        super().__init__(f"Thread cancelled with code: {code}")
         self.code = code
 
 
 class TerminatedError(Exception):
     def __init__(self):
-        super().__init__('Thread was forcibly terminated')
+        super().__init__("Thread was forcibly terminated")
 
 
 class WorkerThread(QtCore.QThread):
@@ -65,6 +65,7 @@ class WorkerThread(QtCore.QThread):
     cancel(exception):
         Emitted if the thread was cancelled.
     """
+
     done = QtCore.Signal(object)
     fail = QtCore.Signal(Exception, str)
     cancel = QtCore.Signal(CancelledError)
@@ -131,7 +132,7 @@ class WorkerThread(QtCore.QThread):
             self.cancel.emit(TerminatedError())
 
 
-class Worker():
+class Worker:
     """
     Used by Process to spawn a new process.
     Holds pipe information for stdio redirection.
@@ -160,9 +161,9 @@ class Worker():
         This is executed as a new process.
         Alerts parent process via pipe.
         """
-        out = io.PipeIO(self.pipeOut, 'w')
-        err = io.PipeIO(self.pipeErr, 'w')
-        inp = io.PipeIO(self.pipeIn, 'r')
+        out = io.PipeIO(self.pipeOut, "w")
+        err = io.PipeIO(self.pipeErr, "w")
+        inp = io.PipeIO(self.pipeIn, "r")
 
         # import sys
         sys.stdout = out
@@ -171,11 +172,11 @@ class Worker():
 
         try:
             result = function(*args, **kwargs)
-            self.pipeControl.send('RESULT')
+            self.pipeControl.send("RESULT")
             self.pipeData.send(result)
         except Exception as exception:
             trace = traceback.format_exc()
-            self.pipeControl.send('EXCEPTION')
+            self.pipeControl.send("EXCEPTION")
             self.pipeData.send((exception, trace))
         finally:
             self.pipeControl.close()
@@ -218,6 +219,7 @@ class Process(QtCore.QThread):
     return
 
     """
+
     done = QtCore.Signal(object)
     fail = QtCore.Signal(Exception, str)
     error = QtCore.Signal(int)
@@ -245,8 +247,11 @@ class Process(QtCore.QThread):
         self.pipeIn = multiprocessing.Pipe(duplex=False)
         self.worker = Worker(self)
         self.process = multiprocessing.Process(
-            target=self.worker.target, daemon=True,
-            args=(function,) + args, kwargs=kwargs)
+            target=self.worker.target,
+            daemon=True,
+            args=(function,) + args,
+            kwargs=kwargs,
+        )
 
     def setStream(self, stream):
         """Send process output to given file-like stream"""
@@ -308,9 +313,9 @@ class Process(QtCore.QThread):
         # Emit the proper signal
         if self.process.exitcode != 0 and not self._quit:
             self.error.emit(self.process.exitcode)
-        elif self._data == 'RESULT':
+        elif self._data == "RESULT":
             self.done.emit(self._data_obj)
-        elif self._data == 'EXCEPTION':
+        elif self._data == "EXCEPTION":
             self.fail.emit(*self._data_obj)
 
     def handleControl(self, data):

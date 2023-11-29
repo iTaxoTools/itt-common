@@ -31,6 +31,7 @@ from .utility import AttrDict
 
 class Instance:
     """Pass as type or instance to instantiate a property by default"""
+
     def __init__(self, *args, **kwargs):
         self.args = args
         self.kwargs = kwargs
@@ -38,6 +39,7 @@ class Instance:
 
 class _Instance:
     """Internal instructions for default class instatiation"""
+
     def __init__(self, type, *args, **kwargs):
         self.type = type
         self.args = args
@@ -45,10 +47,9 @@ class _Instance:
 
 
 class Property:
-
-    key_ref = 'properties'
-    key_list = '_property_list'
-    key_tags = '_property_tags'
+    key_ref = "properties"
+    key_list = "_property_list"
+    key_tags = "_property_tags"
 
     def __init__(self, type=object, default=None, tag=None):
         if isinstance(type, UnionType):
@@ -59,23 +60,23 @@ class Property:
 
     @staticmethod
     def key_value(key):
-        return f'_property_{key}_value'
+        return f"_property_{key}_value"
 
     @staticmethod
     def key_notify(key):
-        return f'_property_{key}_notify'
+        return f"_property_{key}_notify"
 
     @staticmethod
     def key_getter(key):
-        return f'_property_{key}_getter'
+        return f"_property_{key}_getter"
 
     @staticmethod
     def key_setter(key):
-        return f'_property_{key}_setter'
+        return f"_property_{key}_setter"
 
     @staticmethod
     def key_default(key):
-        return f'_property_{key}_default'
+        return f"_property_{key}_default"
 
 
 class PropertyRef:
@@ -130,7 +131,9 @@ class PropertiesRef:
     def __getattr__(self, attr):
         if attr in self._list():
             return PropertyRef(self._parent, attr)
-        raise AttributeError(f'{repr(type(self._parent).__name__)} has no property: {repr(attr)}')
+        raise AttributeError(
+            f"{repr(type(self._parent).__name__)} has no property: {repr(attr)}"
+        )
 
     def __getitem__(self, key):
         return self.__getattr__(key)
@@ -151,8 +154,8 @@ class PropertiesRef:
 class PropertyMeta(type(QtCore.QObject)):
     def __new__(cls, name, bases, attrs):
         properties = {
-            key: attrs[key] for key in attrs
-            if isinstance(attrs[key], Property)}
+            key: attrs[key] for key in attrs if isinstance(attrs[key], Property)
+        }
         cls._init_list(bases, attrs)
         for key, prop in properties.items():
             cls._register_property(attrs, key, prop)
@@ -236,21 +239,18 @@ class PropertyObject(QtCore.QObject, metaclass=PropertyMeta):
             property.set(property.default)
 
     def as_dict(self):
-        return AttrDict({
-            property.key: property.value
-            for property in self.properties
-        })
+        return AttrDict({property.key: property.value for property in self.properties})
 
 
 class EnumObjectMeta(PropertyMeta):
     def __new__(cls, name, bases, attrs):
-        enum = attrs.get('enum', None)
+        enum = attrs.get("enum", None)
         if not enum:
             return super().__new__(cls, name, bases, attrs)
 
-        get_key = attrs.get('get_key', lambda x: x.key)
-        get_type = attrs.get('get_type', lambda x: x.type)
-        get_default = attrs.get('get_default', lambda x: x.default)
+        get_key = attrs.get("get_key", lambda x: x.key)
+        get_type = attrs.get("get_type", lambda x: x.type)
+        get_default = attrs.get("get_default", lambda x: x.default)
         for field in enum:
             attrs[get_key(field)] = Property(get_type(field), get_default(field))
         return super().__new__(cls, name, bases, attrs)
@@ -261,7 +261,7 @@ class EnumObject(PropertyObject, metaclass=EnumObjectMeta):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if 'enum' in dir(self):
+        if "enum" in dir(self):
             self.reset()
 
     def reset(self):
@@ -312,7 +312,6 @@ class Binding:
         proxy: Optional[Callable] = None,
         condition: Optional[Callable] = None,
     ) -> Binding:
-
         if isinstance(source, PropertyRef):
             signal = source.notify
             update_slot = source.update
@@ -332,12 +331,12 @@ class Binding:
         signal.connect(bound_slot)
 
         return cls(
-            source = source,
-            destination = destination,
-            signal = signal,
-            slot = slot,
-            bound_slot = bound_slot,
-            update_slot = update_slot,
+            source=source,
+            destination=destination,
+            signal=signal,
+            slot=slot,
+            bound_slot=bound_slot,
+            update_slot=update_slot,
         )
 
     def unbind(self):
@@ -356,7 +355,6 @@ class Binder(dict[BindingHash, Binding]):
         proxy: Optional[Callable] = None,
         condition: Optional[Callable] = None,
     ) -> None:
-
         binding = Binding.new(source, destination, proxy, condition)
         self[self._hash(source, destination)] = binding
 
@@ -365,7 +363,6 @@ class Binder(dict[BindingHash, Binding]):
         source: Union[PropertyRef, QtCore.SignalInstance],
         destination: Union[PropertyRef, Callable],
     ) -> None:
-
         hash = self._hash(source, destination)
         self[hash].unbind()
         del self[hash]
@@ -384,7 +381,6 @@ class Binder(dict[BindingHash, Binding]):
         source: Union[PropertyRef, QtCore.SignalInstance],
         destination: Union[PropertyRef, Callable],
     ) -> BindingHash:
-
         if isinstance(source, PropertyRef):
             signal = source.notify
         else:
