@@ -41,6 +41,7 @@ Homepage = "https://github.com/StefanPatman"
 Source = "https://github.com/StefanPatman/pypi-test"
 
 [tool.setuptools-git-versioning]
+dirty_template = "{tag}"
 enabled = true
 
 [tool.ruff]
