@@ -42,8 +42,8 @@ hook-dirs = "itaxotools.__pyinstaller:get_hook_dirs"
 tests = "itaxotools.__pyinstaller:get_PyInstaller_tests"
 
 [project.urls]
-Homepage = "https://github.com/StefanPatman"
-Source = "https://github.com/StefanPatman/pypi-test"
+Homepage = "https://itaxotools.org/"
+Source = "https://github.com/iTaxoTools/itt-common"
 
 [tool.setuptools-git-versioning]
 dirty_template = "{tag}"
