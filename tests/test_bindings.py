@@ -5,7 +5,7 @@ class DummyObject(PropertyObject):
     dummy = Property(int, 0)
 
 
-def test_simple_bind():
+def test_simple_bind(qtbot):
     a = DummyObject()
     b = DummyObject()
 
@@ -17,7 +17,7 @@ def test_simple_bind():
     assert b.dummy == 42
 
 
-def test_proxy_bind():
+def test_proxy_bind(qtbot):
     a = DummyObject()
     b = DummyObject()
 
@@ -29,7 +29,7 @@ def test_proxy_bind():
     assert b.dummy == 43
 
 
-def test_conditional_bind():
+def test_conditional_bind(qtbot):
     a = DummyObject()
     b = DummyObject()
 
@@ -45,7 +45,7 @@ def test_conditional_bind():
     assert b.dummy == 11
 
 
-def test_binder_update():
+def test_binder_update(qtbot):
     a = DummyObject()
     b = DummyObject()
 
@@ -62,7 +62,7 @@ def test_binder_update():
     assert b.dummy == 1
 
 
-def test_property_tags():
+def test_property_tags(qtbot):
     class DummyTaggedObject(PropertyObject):
         x = Property(int, 0, tag="x")
         y = Property(int, 0, tag="y")
@@ -75,7 +75,7 @@ def test_property_tags():
     assert a.properties.z.tag is None
 
 
-def test_property_iteration():
+def test_property_iteration(qtbot):
     class DummyTaggedObject(PropertyObject):
         x = Property(int, 1)
         y = Property(int, 2)
