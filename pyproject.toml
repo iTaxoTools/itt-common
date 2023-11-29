@@ -42,3 +42,20 @@ Source = "https://github.com/StefanPatman/pypi-test"
 
 [tool.setuptools-git-versioning]
 enabled = true
+
+[tool.ruff]
+extend-select = ["I"]
+
+[tool.ruff.lint.isort]
+required-imports = ["from __future__ import annotations"]
+section-order = [
+    "future",
+    "pyqt",
+    "standard-library",
+    "first-party",
+    "local-folder",
+    "third-party"
+]
+
+[tool.ruff.lint.isort.sections]
+"pyqt" = ["PySide6"]
