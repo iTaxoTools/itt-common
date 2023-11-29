@@ -31,10 +31,15 @@ dev = [
     "pytest",
     "pytest-qt",
     "pytest-xvfb",
+    "pyinstaller",
 ]
 gui =[
     "pyside6"
 ]
+
+[project.entry-points.pyinstaller40]
+hook-dirs = "itaxotools.__pyinstaller:get_hook_dirs"
+tests = "itaxotools.__pyinstaller:get_PyInstaller_tests"
 
 [project.urls]
 Homepage = "https://github.com/StefanPatman"
@@ -48,7 +53,6 @@ enabled = true
 extend-select = ["I"]
 
 [tool.ruff.lint.isort]
-required-imports = ["from __future__ import annotations"]
 section-order = [
     "future",
     "pyqt",
