@@ -1,10 +1,45 @@
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel"]
+requires = ["setuptools", "wheel", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
-[tool.autoflake]
-remove-all-unused-imports = true
-ignore-init-module-imports = true
-remove-unused-variables = true
-recursive = true
-in-place = true
+[project]
+name = "itaxotools-common"
+dynamic = ["version"]
+description = "Common resources for iTaxoTools"
+readme = "README.md"
+requires-python = ">=3.10.2, <4"
+keywords = []
+authors = [
+    { name = "StefanPatman", email = "stefanpatman91@gmail.com" },
+]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "setuptools-git-versioning",
+    "pre-commit",
+    "ruff",
+    "pytest",
+    "pytest-qt",
+    "pytest-xvfb",
+]
+gui =[
+    "pyside6"
+]
+
+[project.urls]
+Homepage = "https://github.com/StefanPatman"
+Source = "https://github.com/StefanPatman/pypi-test"
+
+[tool.setuptools-git-versioning]
+enabled = true
+
