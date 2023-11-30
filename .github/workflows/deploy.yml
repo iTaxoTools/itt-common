@@ -56,6 +56,10 @@ jobs:
     needs:
       - publish-to-testpypi
 
+    environment:
+      name: github
+      url: ${{ github.server_url }}/${{ github.repository }}/releases
+
     permissions:
       contents: write
       id-token: write
