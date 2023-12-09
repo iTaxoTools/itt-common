@@ -1,12 +1,16 @@
 # iTaxoTools common resources
 
-[![GitHub - Test](https://github.com/iTaxoTools/itt-common/actions/workflows/test.yml/badge.svg)](
+[![PyPI - Version](https://img.shields.io/pypi/v/itaxotools-common)](
+    https://pypi.org/project/itaxotools-common)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/itaxotools-common)](
+    https://pypi.org/project/itaxotools-common)
+[![PyPI - License](https://img.shields.io/pypi/l/itaxotools-common)](
+    https://pypi.org/project/itaxotools-common)
+[![GitHub - Tests](https://img.shields.io/github/actions/workflow/status/iTaxoTools/itt-common/test.yml?label=tests)](
     https://github.com/iTaxoTools/itt-common/actions/workflows/test.yml)
-[![GitHub - Deploy](https://github.com/iTaxoTools/itt-common/actions/workflows/deploy.yml/badge.svg)](
-    https://github.com/iTaxoTools/itt-common/actions/workflows/deploy.yml)
 
-This package contains common modules and resources for use by other iTaxoTools projects.
+This package contains common modules and resources for use by other iTaxoTools projects:
 
-Having this on its own repository makes it easier to maintain across all projects.
-
-It is not meant to be used on its own.
+- Logos and icon resources, including import machinery
+- Custom binding interface for PySide6 properties
+- Multi-processing utilities for PySide6
