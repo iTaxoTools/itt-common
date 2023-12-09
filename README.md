@@ -14,3 +14,4 @@ This package contains common modules and resources for use by other iTaxoTools p
 - Logos and icon resources, including import machinery
 - Custom binding interface for PySide6 properties
 - Multi-processing utilities for PySide6
+- PyInstaller hook directory definition

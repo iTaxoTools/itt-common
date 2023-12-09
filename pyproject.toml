@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel", "setuptools-git-versioning"]
+requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -25,7 +25,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = [
-    "setuptools-git-versioning",
+    "setuptools-scm",
     "pre-commit",
     "ruff",
     "pytest",
@@ -45,10 +45,11 @@ tests = "itaxotools.__pyinstaller:get_PyInstaller_tests"
 Homepage = "https://itaxotools.org/"
 Source = "https://github.com/iTaxoTools/itt-common"
 
-[tool.setuptools-git-versioning]
-dirty_template = "{tag}"
-dev_template = "{tag}"
-enabled = true
+[tool.setuptools.packages.find]
+namespaces = true
+where = ["src"]
+
+[tool.setuptools_scm]
 
 [tool.ruff]
 ignore-init-module-imports = true
