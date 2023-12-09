@@ -7,7 +7,7 @@ on:
 
 env:
   PROJECT_NAME: itaxotools-common
-  ARTIFACT_NAME: itaxotools-common-distributions
+  ARTIFACT_DISTRIBUTIONS: itaxotools-common-distributions
 
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_DISTRIBUTIONS }}
           path: dist/*
 
 
@@ -46,7 +46,7 @@ jobs:
       - name: Download all the dists
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_DISTRIBUTIONS }}
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -72,7 +72,7 @@ jobs:
       - name: Download all the dists
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_DISTRIBUTIONS }}
           path: dist
 
       - uses: pypa/gh-action-pypi-publish@release/v1
@@ -84,7 +84,7 @@ jobs:
     name: Draft a GitHub Release
     runs-on: ubuntu-latest
     needs:
-      - publish-to-pypi
+      - publish-to-testpypi
 
     environment:
       name: github
@@ -98,7 +98,7 @@ jobs:
       - name: Download all the dists
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.ARTIFACT_NAME }}
+          name: ${{ env.ARTIFACT_DISTRIBUTIONS }}
           path: dist
 
       - name: Create GitHub Release
