@@ -53,7 +53,8 @@ def _package_path_importlib(package):
 
 
 try:
-    import importlib.resources
+    import importlib.resources  # noqa
+    from importlib.resources import files  # noqa
 
     package_path = _package_path_importlib
 except (ModuleNotFoundError, ImportError):

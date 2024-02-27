@@ -23,7 +23,6 @@ from PySide6 import QtCore
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from types import UnionType
 from typing import Callable, Iterator, Optional, TypeVar, Union, get_origin
 
 from .utility import AttrDict
@@ -52,8 +51,6 @@ class Property:
     key_tags = "_property_tags"
 
     def __init__(self, type=object, default=None, tag=None):
-        if isinstance(type, UnionType):
-            type = object
         self.type = type
         self.default = default
         self.tag = tag
@@ -268,7 +265,7 @@ class EnumObject(PropertyObject, metaclass=EnumObjectMeta):
         self._set_property_defaults()
 
 
-BindingHash = tuple[QtCore.SignalInstance, Callable]
+BindingHash = tuple
 
 
 @dataclass(frozen=True)
@@ -347,7 +344,7 @@ class Binding:
             self.update_slot()
 
 
-class Binder(dict[BindingHash, Binding]):
+class Binder(dict):
     def bind(
         self,
         source: Union[PropertyRef, QtCore.SignalInstance],

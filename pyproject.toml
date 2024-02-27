@@ -7,7 +7,7 @@ name = "itaxotools-common"
 dynamic = ["version"]
 description = "Common resources for iTaxoTools"
 readme = "README.md"
-requires-python = ">=3.10.2, <4"
+requires-python = ">=3.8.6, <4"
 keywords = []
 authors = [
     { name = "StefanPatman", email = "stefanpatman91@gmail.com" },
