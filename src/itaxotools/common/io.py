@@ -22,6 +22,7 @@ import io
 import os
 import sys
 from contextlib import contextmanager
+from pathlib import Path
 
 
 @contextmanager
@@ -43,12 +44,12 @@ def redirect(module=sys, stream="stdout", dest=None, mode="w"):
     """
     Redirect module's stream according to `dest`:
     - If None: Do nothing
-    - If String: Open file and redirect
+    - If String or Path: Open file and redirect
     - Else: Assume IOWrapper, redirect
     """
     if dest is None:
         yield getattr(module, stream)
-    elif isinstance(dest, str):
+    elif isinstance(dest, str) or isinstance(dest, Path):
         with open(dest, mode) as file, _redirect(module, stream, file) as f:
             yield f
     else:
